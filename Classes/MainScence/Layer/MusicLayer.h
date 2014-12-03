@@ -10,6 +10,7 @@ USING_NS_CC;
 class MusicLayer : public Layer {
 private:
 	std::vector<Node*> barrier[5];
+	std::vector<Node*> obstacleLR[2];
 	void run(EventCustom*);
 public:
 	virtual bool init();

@@ -1,8 +1,9 @@
 #ifndef __RESOLUTION_CONST_H
 #define __RESOLUTION_CONST_H
 
-#define designWidth		560
-#define designHeight	960
+#define designWidth		667
+#define designHeight	1048
+#define PNG_SCALE (0.5)
 
 #define _left   0
 #define _right	designWidth
