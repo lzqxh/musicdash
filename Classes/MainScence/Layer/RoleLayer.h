@@ -2,6 +2,7 @@
 #define __ROLE_LAYER_H__
 
 #include "cocos2d.h"
+#include <string>
 
 USING_NS_CC;
 
@@ -15,5 +16,10 @@ public:
 	void run(EventCustom *);
 
 	Sprite *role;
+
+private:
+	std::string frameName;
+	std::string nextFrameName(std::string);
+	int eventCount;
 };
 #endif //__ROLE_LAYER_H__

@@ -4,6 +4,25 @@
 	<dict>
 		<key>frames</key>
 		<dict>
+			<key>slide_0.png</key>
+			<dict>
+				<key>width</key>
+				<integer>360</integer>
+				<key>height</key>
+				<integer>783</integer>
+				<key>originalWidth</key>
+				<integer>360</integer>
+				<key>originalHeight</key>
+				<integer>783</integer>
+				<key>x</key>
+				<integer>0</integer>
+				<key>y</key>
+				<integer>0</integer>
+				<key>offsetX</key>
+				<real>0</real>
+				<key>offsetY</key>
+				<real>0</real>
+			</dict>
 			<key>slide_1.png</key>
 			<dict>
 				<key>width</key>
@@ -15,7 +34,7 @@
 				<key>originalHeight</key>
 				<integer>783</integer>
 				<key>x</key>
-				<integer>0</integer>
+				<integer>360</integer>
 				<key>y</key>
 				<integer>0</integer>
 				<key>offsetX</key>
@@ -24,25 +43,6 @@
 				<real>0</real>
 			</dict>
 			<key>slide_2.png</key>
-			<dict>
-				<key>width</key>
-				<integer>360</integer>
-				<key>height</key>
-				<integer>783</integer>
-				<key>originalWidth</key>
-				<integer>360</integer>
-				<key>originalHeight</key>
-				<integer>783</integer>
-				<key>x</key>
-				<integer>360</integer>
-				<key>y</key>
-				<integer>0</integer>
-				<key>offsetX</key>
-				<real>0</real>
-				<key>offsetY</key>
-				<real>0</real>
-			</dict>
-			<key>slide_3.png</key>
 			<dict>
 				<key>width</key>
 				<integer>360</integer>
@@ -61,7 +61,7 @@
 				<key>offsetY</key>
 				<real>0</real>
 			</dict>
-			<key>slide_4.png</key>
+			<key>slide_3.png</key>
 			<dict>
 				<key>width</key>
 				<integer>360</integer>
@@ -80,7 +80,7 @@
 				<key>offsetY</key>
 				<real>0</real>
 			</dict>
-			<key>toLeft_1.png</key>
+			<key>toRight_0.png</key>
 			<dict>
 				<key>width</key>
 				<integer>383</integer>
@@ -99,7 +99,26 @@
 				<key>offsetY</key>
 				<real>0</real>
 			</dict>
-			<key>toLeft_2.png</key>
+			<key>toRight_1.png</key>
+			<dict>
+				<key>width</key>
+				<integer>383</integer>
+				<key>height</key>
+				<integer>779</integer>
+				<key>originalWidth</key>
+				<integer>383</integer>
+				<key>originalHeight</key>
+				<integer>779</integer>
+				<key>x</key>
+				<integer>0</integer>
+				<key>y</key>
+				<integer>783</integer>
+				<key>offsetX</key>
+				<real>0</real>
+				<key>offsetY</key>
+				<real>0</real>
+			</dict>
+			<key>toRight_2.png</key>
 			<dict>
 				<key>width</key>
 				<integer>379</integer>
@@ -113,6 +132,101 @@
 				<integer>383</integer>
 				<key>y</key>
 				<integer>783</integer>
+				<key>offsetX</key>
+				<real>0</real>
+				<key>offsetY</key>
+				<real>0</real>
+			</dict>
+			<key>toRight_3.png</key>
+			<dict>
+				<key>width</key>
+				<integer>379</integer>
+				<key>height</key>
+				<integer>775</integer>
+				<key>originalWidth</key>
+				<integer>379</integer>
+				<key>originalHeight</key>
+				<integer>775</integer>
+				<key>x</key>
+				<integer>383</integer>
+				<key>y</key>
+				<integer>783</integer>
+				<key>offsetX</key>
+				<real>0</real>
+				<key>offsetY</key>
+				<real>0</real>
+			</dict>
+			<key>toLeft_0.png</key>
+			<dict>
+				<key>width</key>
+				<integer>383</integer>
+				<key>height</key>
+				<integer>779</integer>
+				<key>originalWidth</key>
+				<integer>383</integer>
+				<key>originalHeight</key>
+				<integer>779</integer>
+				<key>x</key>
+				<integer>0</integer>
+				<key>y</key>
+				<integer>1580</integer>
+				<key>offsetX</key>
+				<real>0</real>
+				<key>offsetY</key>
+				<real>0</real>
+			</dict>
+			<key>toLeft_1.png</key>
+			<dict>
+				<key>width</key>
+				<integer>383</integer>
+				<key>height</key>
+				<integer>779</integer>
+				<key>originalWidth</key>
+				<integer>383</integer>
+				<key>originalHeight</key>
+				<integer>779</integer>
+				<key>x</key>
+				<integer>0</integer>
+				<key>y</key>
+				<integer>1580</integer>
+				<key>offsetX</key>
+				<real>0</real>
+				<key>offsetY</key>
+				<real>0</real>
+			</dict>
+			<key>toLeft_2.png</key>
+			<dict>
+				<key>width</key>
+				<integer>379</integer>
+				<key>height</key>
+				<integer>775</integer>
+				<key>originalWidth</key>
+				<integer>379</integer>
+				<key>originalHeight</key>
+				<integer>775</integer>
+				<key>x</key>
+				<integer>383</integer>
+				<key>y</key>
+				<integer>1580</integer>
+				<key>offsetX</key>
+				<real>0</real>
+				<key>offsetY</key>
+				<real>0</real>
+			</dict>
+			<key>toLeft_3.png</key>
+			<dict>
+				<key>width</key>
+				<integer>379</integer>
+				<key>height</key>
+				<integer>775</integer>
+				<key>originalWidth</key>
+				<integer>379</integer>
+				<key>originalHeight</key>
+				<integer>775</integer>
+				<key>x</key>
+				<integer>383</integer>
+				<key>y</key>
+				<integer>1580</integer>
 				<key>offsetX</key>
 				<real>0</real>
 				<key>offsetY</key>
