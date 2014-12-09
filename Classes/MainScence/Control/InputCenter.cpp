@@ -6,12 +6,6 @@ bool InputCenter::init() {
 	if (!Layer::init()) return false;
 	this->setAccelerometerEnabled(true);
 
-	auto listener = EventListenerTouchOneByOne::create();
-	listener->onTouchBegan = CC_CALLBACK_2(InputCenter::onTouchBegan, this);
-	listener->onTouchMoved = CC_CALLBACK_2(InputCenter::onTouchMoved, this);
-	listener->onTouchEnded = CC_CALLBACK_2(InputCenter::onTouchEnded, this);
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
-
 	ms = nullptr;
 	touchStatus = 0;
 
@@ -20,13 +14,23 @@ bool InputCenter::init() {
 
 void InputCenter::onEnter() {
 	Layer::onEnter();
+
+	listener = EventListenerTouchOneByOne::create();
+	listener->onTouchBegan = CC_CALLBACK_2(InputCenter::onTouchBegan, this);
+	listener->onTouchMoved = CC_CALLBACK_2(InputCenter::onTouchMoved, this);
+	listener->onTouchEnded = CC_CALLBACK_2(InputCenter::onTouchEnded, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 }
 
 void InputCenter::onExit() {
+	_eventDispatcher->removeEventListener(listener);
 	Layer::onExit();
 }
 
 bool InputCenter::onTouchBegan(Touch *touch, Event *event) {
+	if (ms)
+		return false;
+
 	auto center = touch->getLocation();
 	this->start = center;
 

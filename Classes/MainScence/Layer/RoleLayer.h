@@ -12,5 +12,8 @@ public:
 
 	virtual void onEnter();
 	virtual void onExit();
+	void run(EventCustom *);
+
+	Sprite *role;
 };
 #endif //__ROLE_LAYER_H__

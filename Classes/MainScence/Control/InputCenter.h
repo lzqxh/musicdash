@@ -18,6 +18,7 @@ public:
 	virtual void onTouchEnded(Touch *touch, Event *event) override;
 
 private:
+	EventListenerTouchOneByOne *listener;
 	MotionStreak * ms;
 	Point start;
 	bool touchStatus; //0为未产生有效touch，1表示已产生有效touch
