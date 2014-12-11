@@ -58,7 +58,8 @@ void MusicLayer::run(EventCustom* event) {
 			node->release();
 		}
 	}
-	int index = curTime + objects.size() - 1;
+//	int index = curTime + objects.size() - 1;
+	int index = curTime + 250 - 1;
 	if (index >= DataVo::inst()->musicLength) return;
 	addTrafficCone(index);
 	addBeer(index);

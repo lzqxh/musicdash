@@ -25,7 +25,7 @@ bool ControlCenter::init() {
 	auto pauseButtonItem = MenuItemImage::create("CloseNormal.png", "CloseSelected.png",
 		CC_CALLBACK_1(ControlCenter::showControlMenu, this));
 	pauseButton = Menu::create(pauseButtonItem, nullptr);
-	pauseButton->setPosition(designWidth-50, designHeight-50);
+	pauseButton->setPosition(50, designHeight-50);
 	addChild(pauseButton, 1000);
 
 	return true;
@@ -61,6 +61,32 @@ void ControlCenter::onExit() {
 
 void ControlCenter::evalution() {
 	int score = 0;
+	int index = curTime;
+	if (index >= DataVo::inst()->musicLength) return;
+	
+	auto data = DataVo::inst()->data[index];
+	switch(roleStatus) {
+	case Sliding_L:
+	case Action_M2L:
+		if( data[0] || data[4] || data[6] )
+			score = -1;
+		else if( data[2] )
+			score = 1;
+		break;
+	case Sliding_M:
+	case Action_L2M:
+	case Action_R2M:
+		if (data[8])
+			score = -1;
+		break;
+	case Sliding_R:
+	case Action_M2R:
+		if (data[1] || data[5] || data[7])
+			score = -1;
+		else if(data[3])
+			score = 1;
+		break;
+	}
 	_eventDispatcher->dispatchCustomEvent(Message::score, &score);
 }
 

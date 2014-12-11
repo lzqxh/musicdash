@@ -50,18 +50,18 @@ void RoleLayer::run(EventCustom *event) {
 		break;
 	case Action_M2L:
 	case Action_R2M:
-		if (++eventCount >= 5) {
+		if (++eventCount >= 10) {
 			eventCount = 0;
-			frameName = nextFrameName("toLeft");
+			frameName = nextFrameName("left");
 			role->setDisplayFrame(cache->getSpriteFrameByName(frameName));
 		}
 		role->setPosition(role->getPosition().x - 5, role->getPosition().y);
 		break;
 	case Action_M2R:
 	case Action_L2M:
-		if (++eventCount >= 5) {
+		if (++eventCount >= 10) {
 			eventCount = 0;
-			frameName = nextFrameName("toRight");
+			frameName = nextFrameName("right");
 			role->setDisplayFrame(cache->getSpriteFrameByName(frameName));
 		}
 		role->setPosition(role->getPosition().x + 5, role->getPosition().y);
@@ -78,8 +78,8 @@ std::string RoleLayer::nextFrameName(std::string prefix) {
 	if (this->frameName.find(prefix) != std::string::npos) {
 		if (prefix == "slide")
 			++frameSuf %= 4;
-		else if (prefix == "toLeft" || prefix == "toRight")
-			++frameSuf %= 4;
+		else if (prefix == "left" || prefix == "right")
+			++frameSuf %= 3;
 		sprintf(newFrameName, "%s_%d.png", prefix.c_str(), frameSuf);
 	}
 	else
