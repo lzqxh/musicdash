@@ -20,7 +20,7 @@ bool MusicLayer::init() {
 		x = x * d;
 	}
 	x = 0.258;
-	for (int i = 0; i < numbers + 10; i++) {
+	for (int i = 0; i < numbers + 50; i++) {
 		Node* node = Node::create();
 		node->setContentSize(Size(1.28f * roadbg->getContentSize().width, 1));
 		node->setNormalizedPosition(Vec2(0.5, y));
