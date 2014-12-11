@@ -59,7 +59,7 @@ void MusicLayer::run(EventCustom* event) {
 		}
 	}
 //	int index = curTime + objects.size() - 1;
-	int index = curTime + 250 - 1;
+	int index = curTime + 210 - 1;
 	if (index >= DataVo::inst()->musicLength) return;
 	addTrafficCone(index);
 	addBeer(index);

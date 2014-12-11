@@ -146,6 +146,7 @@ void ControlCenter::fixedUpdate(float dt) {
 		}
 		roleMove();
 		evalution();
+		if (DataVo::inst()->data[curTime][8] == 1) gameStatus = gs_pause;
 		_eventDispatcher->dispatchCustomEvent(Message::next_timeslice, nullptr);
 	}
 }
