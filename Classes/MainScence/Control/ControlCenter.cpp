@@ -20,6 +20,8 @@ bool ControlCenter::init() {
 	auto inputCenter= InputCenter::create();
 	addChild(inputCenter);
 
+	roleStatus = Sliding_M;
+
 	auto pauseButtonItem = MenuItemImage::create("CloseNormal.png", "CloseSelected.png",
 		CC_CALLBACK_1(ControlCenter::showControlMenu, this));
 	pauseButton = Menu::create(pauseButtonItem, nullptr);
@@ -102,37 +104,37 @@ void ControlCenter::roleMove() {
 	case Sliding_U:
 		if (DataVo::inst()->data[curTime][2] == 0) {
 			roleStatus = RoleStatus::Action_U2M;
-			DataVo::inst()->actionCount = 10;
+			DataVo::inst()->actionCount = 20;
 		}
 		break;
 	case Sliding_L:
 		if (lastInput == Message::input_touch_release) {
 			roleStatus = RoleStatus::Action_L2M;
-			DataVo::inst()->actionCount = 10;
+			DataVo::inst()->actionCount = 20;
 			lastInput = "";
 		}
 		break;
 	case Sliding_R:
 		if (lastInput == Message::input_touch_release) {
 			roleStatus = RoleStatus::Action_R2M;
-			DataVo::inst()->actionCount = 10;
+			DataVo::inst()->actionCount = 20;
 			lastInput = "";
 		}
 		break;
 	case Sliding_M:
 		if (lastInput == Message::input_slide_left) {
 			roleStatus = RoleStatus::Action_M2L;
-			DataVo::inst()->actionCount = 10;
+			DataVo::inst()->actionCount = 20;
 			lastInput = "";
 		}
 		else if (lastInput == Message::input_slide_right) {
 			roleStatus = RoleStatus::Action_M2R;
-			DataVo::inst()->actionCount = 10;
+			DataVo::inst()->actionCount = 20;
 			lastInput = "";
 		}
 		else if (lastInput == Message::input_slide_up) {
 			roleStatus = RoleStatus::Action_M2U;
-			DataVo::inst()->actionCount = 10;
+			DataVo::inst()->actionCount = 20;
 			lastInput = "";
 		}
 		break;

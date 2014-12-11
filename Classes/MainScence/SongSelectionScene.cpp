@@ -1,5 +1,5 @@
 #include "SongSelectionScene.h"
-#include "tool\ResolutionConst.h"
+#include "consts\ResolutionConst.h"
 #include "GameWorld.h"
 
 using namespace cocos2d;
