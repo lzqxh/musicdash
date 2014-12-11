@@ -35,6 +35,9 @@ void RoleLayer::onExit() {
 void RoleLayer::run(EventCustom *event) {
 
 	auto cache = SpriteFrameCache::getInstance();
+	static RoleStatus lastRoleStatus;
+	if (roleStatus != lastRoleStatus) eventCount = 0;
+	lastRoleStatus = roleStatus;
 	switch(roleStatus) {
 	case Sliding_M:
 	case Sliding_L:
@@ -52,7 +55,7 @@ void RoleLayer::run(EventCustom *event) {
 	case Action_R2M:
 		if (++eventCount >= 5) {
 			eventCount = 0;
-			frameName = nextFrameName("toLeft");
+			frameName = nextFrameName("left");
 			role->setDisplayFrame(cache->getSpriteFrameByName(frameName));
 		}
 		role->setPosition(role->getPosition().x - 5, role->getPosition().y);
@@ -61,11 +64,21 @@ void RoleLayer::run(EventCustom *event) {
 	case Action_L2M:
 		if (++eventCount >= 5) {
 			eventCount = 0;
-			frameName = nextFrameName("toRight");
+			frameName = nextFrameName("right");
 			role->setDisplayFrame(cache->getSpriteFrameByName(frameName));
 		}
 		role->setPosition(role->getPosition().x + 5, role->getPosition().y);
 		break;
+	case Action_JUMP:
+		++eventCount;
+		if (eventCount == 1)
+			role->setDisplayFrame(cache->getSpriteFrameByName("up_0.png"));
+		if (eventCount <= 10)
+			role->setPosition(role->getPosition().x, role->getPosition().y + 15);
+		else if (eventCount > 40 - 10)
+			role->setPosition(role->getPosition().x, role->getPosition().y - 15);
+		break;
+
 	default:
 		break;
 	}
@@ -78,7 +91,7 @@ std::string RoleLayer::nextFrameName(std::string prefix) {
 	if (this->frameName.find(prefix) != std::string::npos) {
 		if (prefix == "slide")
 			++frameSuf %= 4;
-		else if (prefix == "toLeft" || prefix == "toRight")
+		else if (prefix == "left" || prefix == "right")
 			++frameSuf %= 4;
 		sprintf(newFrameName, "%s_%d.png", prefix.c_str(), frameSuf);
 	}

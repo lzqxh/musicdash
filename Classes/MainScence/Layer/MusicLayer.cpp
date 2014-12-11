@@ -58,7 +58,8 @@ void MusicLayer::run(EventCustom* event) {
 			node->release();
 		}
 	}
-	int index = curTime + objects.size() - 1;
+//	int index = curTime + objects.size() - 1;
+	int index = curTime + 250 - 1;
 	if (index >= DataVo::inst()->musicLength) return;
 	addTrafficCone(index);
 	addBeer(index);
@@ -70,12 +71,14 @@ void MusicLayer::run(EventCustom* event) {
 void MusicLayer::addTrafficCone(int index) {
 	if (DataVo::inst()->data[index][0]) {
       	Sprite* sprite = Sprite::create("mainscence/obstacle1.png");
-      	sprite->setNormalizedPosition(Vec2(-0.25, 0));
+		sprite->setScale(1.5f);
+      	sprite->setNormalizedPosition(Vec2(-0.18, 0));
 		objects.back()->addChild(sprite);
 	}
 	if (DataVo::inst()->data[index][1]) {
       	Sprite* sprite = Sprite::create("mainscence/obstacle1.png");
-      	sprite->setNormalizedPosition(Vec2(0.25, 0));
+		sprite->setScale(1.5f);
+      	sprite->setNormalizedPosition(Vec2(0.18, 0));
 		objects.back()->addChild(sprite);
 	}
 }
@@ -83,25 +86,29 @@ void MusicLayer::addTrafficCone(int index) {
 void MusicLayer::addBeer(int index) {
 	if (DataVo::inst()->data[index][2]) {
       	Sprite* sprite = Sprite::create("mainscence/beer.png");
-      	sprite->setNormalizedPosition(Vec2(-0.25, 0));
+		sprite->setScale(1.5f);
+      	sprite->setNormalizedPosition(Vec2(-0.18, 0));
 		objects.back()->addChild(sprite);
 	}
 	if (DataVo::inst()->data[index][3]) {
       	Sprite* sprite = Sprite::create("mainscence/beer.png");
-      	sprite->setNormalizedPosition(Vec2(0.25, 0));
+		sprite->setScale(1.5f);
+      	sprite->setNormalizedPosition(Vec2(0.18, 0));
 		objects.back()->addChild(sprite);
 	}
 }
 
 void MusicLayer::addBarrier(int index) {
-	int interval = 7;
+	int interval = 10;
 	if (DataVo::inst()->data[index][4] % interval == 1) {
       	Sprite* sprite = Sprite::create("mainscence/barrier.png");
+		sprite->setScale(1.5f);
       	sprite->setNormalizedPosition(Vec2(-0.19, 0));
 		objects.back()->addChild(sprite);
 	}
 	if (DataVo::inst()->data[index][5] % interval == 1) {
       	Sprite* sprite = Sprite::create("mainscence/barrier.png");
+		sprite->setScale(1.5f);
       	sprite->setNormalizedPosition(Vec2(0.19, 0));
 		sprite->setFlipX(true);
 		objects.back()->addChild(sprite);
@@ -109,16 +116,18 @@ void MusicLayer::addBarrier(int index) {
 }
 
 void MusicLayer::addRailing(int index) {
-	int interval = 17;
+	int interval = 19;
 	if (DataVo::inst()->data[index][6] % interval == 1) {
       	Sprite* sprite = Sprite::create("mainscence/railing.png");
-      	sprite->setNormalizedPosition(Vec2(-0.25, 0));
+      	sprite->setNormalizedPosition(Vec2(-0.14, 0));
+		sprite->setRotation(-6.5f);
 		sprite->setFlipX(true);
 		objects.back()->addChild(sprite);
 	}
 	if (DataVo::inst()->data[index][7] % interval == 1) {
       	Sprite* sprite = Sprite::create("mainscence/railing.png");
-      	sprite->setNormalizedPosition(Vec2(0.25, 0));
+		sprite->setRotation(6.5f);
+      	sprite->setNormalizedPosition(Vec2(0.14, 0));
 		objects.back()->addChild(sprite);
 	}
 }
@@ -126,6 +135,7 @@ void MusicLayer::addManholeCover(int index) {
 	if (DataVo::inst()->data[index][8]) {
       	Sprite* sprite = Sprite::create("mainscence/manholecover.png");
       	sprite->setNormalizedPosition(Vec2(0, 0));
+		sprite->setScale(1.5f);
 		objects.back()->addChild(sprite);
 	}
 }

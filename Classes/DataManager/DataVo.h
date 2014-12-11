@@ -19,6 +19,7 @@ enum RoleStatus {
 	Action_M2L,
 	Action_R2M,
 	Action_M2R,
+	Action_JUMP,
 	Action_M2U,
 	Action_U2M
 };

@@ -93,13 +93,8 @@ void ControlCenter::roleMove() {
 	case Action_M2R:
 		if (--DataVo::inst()->actionCount == 0) roleStatus = RoleStatus::Sliding_R;
 		break;
-	case Action_U2M:
-		if (DataVo::inst()->data[curTime][2] == 1) roleStatus = RoleStatus::Sliding_U;
-		else if (--DataVo::inst()->actionCount == 0) roleStatus = RoleStatus::Sliding_M;
-		break;
-	case Action_M2U:
-		if (DataVo::inst()->data[curTime][2] == 1) roleStatus = RoleStatus::Sliding_U;
-		else if (--DataVo::inst()->actionCount == 0) roleStatus = RoleStatus::Sliding_U;
+	case Action_JUMP:
+		if (--DataVo::inst()->actionCount == 0) roleStatus = RoleStatus::Sliding_M;
 		break;
 	case Sliding_U:
 		if (DataVo::inst()->data[curTime][2] == 0) {
@@ -133,8 +128,8 @@ void ControlCenter::roleMove() {
 			lastInput = "";
 		}
 		else if (lastInput == Message::input_slide_up) {
-			roleStatus = RoleStatus::Action_M2U;
-			DataVo::inst()->actionCount = 20;
+			roleStatus = RoleStatus::Action_JUMP;
+			DataVo::inst()->actionCount = 40;
 			lastInput = "";
 		}
 		break;
