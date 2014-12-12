@@ -36,6 +36,7 @@ void RoleLayer::run(EventCustom *event) {
 
 	auto cache = SpriteFrameCache::getInstance();
 	static RoleStatus lastRoleStatus;
+	Vec2 off;
 	if (roleStatus != lastRoleStatus) eventCount = 0;
 	lastRoleStatus = roleStatus;
 	switch(roleStatus) {
@@ -50,6 +51,26 @@ void RoleLayer::run(EventCustom *event) {
 		else
 			frameName = nextFrameName("slide");
 		role->setDisplayFrame(cache->getSpriteFrameByName(frameName));
+		break;
+	case Sliding_UL:
+	case Sliding_UR:
+		role->setDisplayFrame(cache->getSpriteFrameByName("up_1.png"));
+		break;
+	case Action_M2UL:
+	case Action_M2UR:
+		role->setDisplayFrame(cache->getSpriteFrameByName("up_0.png"));
+		off = roleStatus == Action_M2UL ? nextM2ULPosition(++eventCount) : 
+									      nextM2URPosition(++eventCount);
+		role->setPosition(role->getPosition() + off);
+		break;
+	case Action_UL2M:
+	case Action_UR2M:
+		role->setDisplayFrame(cache->getSpriteFrameByName("up_0.png"));
+		off = roleStatus == Action_UL2M ? nextM2ULPosition(20 - eventCount++) : 
+									      nextM2URPosition(20 - eventCount++);
+		off *= -1;
+		CCLog("off %.3f %.3f\n", off.x, off.y);
+		role->setPosition(role->getPosition() + off);
 		break;
 	case Action_M2L:
 	case Action_R2M:
@@ -84,6 +105,12 @@ void RoleLayer::run(EventCustom *event) {
 	}
 }
 
+Vec2 RoleLayer::nextM2ULPosition(int index) {
+	return Vec2(-8.61f, 3.1f);
+}
+Vec2 RoleLayer::nextM2URPosition(int index) {
+	return Vec2(11.61f, 3.1f);
+}
 std::string RoleLayer::nextFrameName(std::string prefix) {
 	char newFrameName[20];
 	int frameSuf = atoi(frameName.substr(frameName.find('_')+1, 1).c_str());

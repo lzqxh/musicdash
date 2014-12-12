@@ -14,14 +14,17 @@ enum RoleStatus {
 	Sliding_M,
 	Sliding_L,
 	Sliding_R,
-	Sliding_U,
 	Action_L2M,
 	Action_M2L,
 	Action_R2M,
 	Action_M2R,
 	Action_JUMP,
-	Action_M2U,
-	Action_U2M
+	Sliding_UL,
+	Sliding_UR,
+	Action_M2UL,
+	Action_UL2M,
+	Action_M2UR,
+	Action_UR2M
 };
 class DataVo {
 private:

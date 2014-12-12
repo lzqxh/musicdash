@@ -13,6 +13,8 @@ namespace Message {
 	const std::string input_touch_release		= "input_touch_release";
 
 	const std::string score = "score";
+
+	const std::string disp_effect = "disp_effect";
 };
 
 

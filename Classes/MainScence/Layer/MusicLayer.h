@@ -10,12 +10,15 @@ USING_NS_CC;
 class MusicLayer : public Layer {
 private:
 	std::vector<Node*> objects;
+	Texture2D* _explosionTexture;
 	void run(EventCustom*);
+	void dispEffect(EventCustom*);
 	void addTrafficCone(int index);
 	void addBeer(int index);
 	void addBarrier(int index);
 	void addRailing(int index);
 	void addManholeCover(int index);
+
 public:
 	virtual bool init();
 	CREATE_FUNC(MusicLayer);

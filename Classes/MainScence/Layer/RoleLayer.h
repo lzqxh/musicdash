@@ -20,6 +20,8 @@ public:
 private:
 	std::string frameName;
 	std::string nextFrameName(std::string);
+	Vec2 nextM2ULPosition(int);
+	Vec2 nextM2URPosition(int);
 	int eventCount;
 };
 #endif //__ROLE_LAYER_H__

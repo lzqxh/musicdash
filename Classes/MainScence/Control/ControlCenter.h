@@ -22,6 +22,17 @@ private:
 	void roleMove();
 	void evalution();
 
+	bool atLeft();
+	bool atRight();
+	bool atRail();
+	bool atJumping();
+	void checkTrafficCone(int index);
+	void checkBeer(int index);
+	void checkBarrier(int index);
+	void checkRailing(int index);
+	void checkManholeCover(int index);
+	void staticScore(int);
+
 public:
 	void receiveInput(EventCustom*);
 	GameStatus gameStatus;
