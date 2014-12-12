@@ -25,7 +25,7 @@ bool ControlCenter::init() {
 	auto pauseButtonItem = MenuItemImage::create("CloseNormal.png", "CloseSelected.png",
 		CC_CALLBACK_1(ControlCenter::showControlMenu, this));
 	pauseButton = Menu::create(pauseButtonItem, nullptr);
-	pauseButton->setPosition(designWidth-50, designHeight-50);
+	pauseButton->setPosition(50, designHeight-50);
 	addChild(pauseButton, 1000);
 
 	return true;
@@ -61,7 +61,34 @@ void ControlCenter::onExit() {
 
 void ControlCenter::evalution() {
 	int score = 0;
-	_eventDispatcher->dispatchCustomEvent(Message::score, &score);
+	int index = curTime;
+	if (index >= DataVo::inst()->musicLength) return;
+	
+	auto data = DataVo::inst()->data[index];
+	if (data[0] == 1 || data[4] == 1 || data[3] == 1) {
+		if (roleStatus == Sliding_R || roleStatus == Action_M2R || roleStatus == Action_R2M)
+			score = 1;
+		else score = -1;
+	}
+
+	if (data[1] == 1 || data[5] == 1 || data[2] == 1) {
+		if (roleStatus == Sliding_L || roleStatus == Action_M2L || roleStatus == Action_L2M)
+			score = 1;
+		else score = -1;
+	}
+
+	if (data[8] == 1) {
+		if (roleStatus == Action_JUMP)
+			score = 1;
+		else score = -1;
+	}
+	if (score != 0) {
+		if (score == -1)
+			DataVo::inst()->combos = 0;
+		else 
+			DataVo::inst()->combos++;
+		_eventDispatcher->dispatchCustomEvent(Message::score, &score);
+	}
 }
 
 void ControlCenter::gameStart() {
@@ -96,12 +123,6 @@ void ControlCenter::roleMove() {
 	case Action_JUMP:
 		if (--DataVo::inst()->actionCount == 0) roleStatus = RoleStatus::Sliding_M;
 		break;
-	case Sliding_U:
-		if (DataVo::inst()->data[curTime][2] == 0) {
-			roleStatus = RoleStatus::Action_U2M;
-			DataVo::inst()->actionCount = 20;
-		}
-		break;
 	case Sliding_L:
 		if (lastInput == Message::input_touch_release) {
 			roleStatus = RoleStatus::Action_L2M;
@@ -132,6 +153,9 @@ void ControlCenter::roleMove() {
 			DataVo::inst()->actionCount = 40;
 			lastInput = "";
 		}
+		else if (lastInput == Message::input_click) {
+			lastInput = "";
+		}
 		break;
 	};
 }
@@ -146,7 +170,6 @@ void ControlCenter::fixedUpdate(float dt) {
 		}
 		roleMove();
 		evalution();
-		if (DataVo::inst()->data[curTime][8] == 1) gameStatus = gs_pause;
 		_eventDispatcher->dispatchCustomEvent(Message::next_timeslice, nullptr);
 	}
 }

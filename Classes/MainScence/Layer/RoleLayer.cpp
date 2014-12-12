@@ -53,7 +53,7 @@ void RoleLayer::run(EventCustom *event) {
 		break;
 	case Action_M2L:
 	case Action_R2M:
-		if (++eventCount >= 5) {
+		if (++eventCount >= 10) {
 			eventCount = 0;
 			frameName = nextFrameName("left");
 			role->setDisplayFrame(cache->getSpriteFrameByName(frameName));
@@ -62,7 +62,7 @@ void RoleLayer::run(EventCustom *event) {
 		break;
 	case Action_M2R:
 	case Action_L2M:
-		if (++eventCount >= 5) {
+		if (++eventCount >= 10) {
 			eventCount = 0;
 			frameName = nextFrameName("right");
 			role->setDisplayFrame(cache->getSpriteFrameByName(frameName));
@@ -92,7 +92,7 @@ std::string RoleLayer::nextFrameName(std::string prefix) {
 		if (prefix == "slide")
 			++frameSuf %= 4;
 		else if (prefix == "left" || prefix == "right")
-			++frameSuf %= 4;
+			++frameSuf %= 3;
 		sprintf(newFrameName, "%s_%d.png", prefix.c_str(), frameSuf);
 	}
 	else

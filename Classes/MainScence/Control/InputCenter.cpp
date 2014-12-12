@@ -72,4 +72,6 @@ void InputCenter::onTouchEnded(Touch *touch, Event *event) {
 		_eventDispatcher->dispatchCustomEvent(Message::input_touch_release);
 		touchStatus = 0;
 	}
+	else 
+		_eventDispatcher->dispatchCustomEvent(Message::input_click);
 }

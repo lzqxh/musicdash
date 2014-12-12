@@ -47,6 +47,9 @@ void MusicLayer::onExit() {
 
 void MusicLayer::run(EventCustom* event) {
 	std::vector<std::vector<int> > &data = DataVo::inst()->data;
+	if (DataVo::inst()->data[curTime][8] == 1) {
+		CCLog("%d\n", curTime);
+	}
 	objects[0]->removeAllChildren();
 	for (int i = 1; i < objects.size(); i++) {
 		std::vector<Node*> v;
@@ -59,7 +62,7 @@ void MusicLayer::run(EventCustom* event) {
 		}
 	}
 //	int index = curTime + objects.size() - 1;
-	int index = curTime + 210 - 1;
+	int index = curTime + 223;
 	if (index >= DataVo::inst()->musicLength) return;
 	addTrafficCone(index);
 	addBeer(index);
@@ -133,6 +136,7 @@ void MusicLayer::addRailing(int index) {
 }
 void MusicLayer::addManholeCover(int index) {
 	if (DataVo::inst()->data[index][8]) {
+		CCLog("%d %d\n", curTime, index);
       	Sprite* sprite = Sprite::create("mainscence/manholecover.png");
       	sprite->setNormalizedPosition(Vec2(0, 0));
 		sprite->setScale(1.5f);
