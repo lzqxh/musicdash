@@ -20,15 +20,17 @@ bool RoleLayer::init() {
 	return true;
 }
 
-
 void RoleLayer::onEnter() {
 	Layer::onEnter();
 	_eventDispatcher->addCustomEventListener(Message::next_timeslice,
 		CC_CALLBACK_1(RoleLayer::run, this));
+	_eventDispatcher->addCustomEventListener(Message::score,
+		CC_CALLBACK_1(RoleLayer::roleEffect, this));
 }
 
 void RoleLayer::onExit() {
 	_eventDispatcher->removeCustomEventListeners(Message::next_timeslice);
+	_eventDispatcher->removeCustomEventListeners(Message::score);
 	Layer::onExit();
 }
 
@@ -81,6 +83,15 @@ void RoleLayer::run(EventCustom *event) {
 
 	default:
 		break;
+	}
+}
+
+void RoleLayer::roleEffect(EventCustom *event) {
+	int score = * static_cast<int *>(event->getUserData());
+	if (score == -1) {
+		role->stopAllActions();
+		role->setVisible(true);
+		role->runAction(Blink::create(0.5, 3));
 	}
 }
 

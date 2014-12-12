@@ -16,6 +16,7 @@ private:
 	void addBarrier(int index);
 	void addRailing(int index);
 	void addManholeCover(int index);
+	void explode(EventCustom*);
 public:
 	virtual bool init();
 	CREATE_FUNC(MusicLayer);

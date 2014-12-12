@@ -66,14 +66,20 @@ void ControlCenter::evalution() {
 	
 	auto data = DataVo::inst()->data[index];
 	if (data[0] == 1 || data[4] == 1 || data[3] == 1) {
-		if (roleStatus == Sliding_R || roleStatus == Action_M2R || roleStatus == Action_R2M)
+		if (roleStatus == Sliding_R || roleStatus == Action_M2R || roleStatus == Action_R2M) {
 			score = 1;
+			if (data[3] == 1)
+				_eventDispatcher->dispatchCustomEvent(Message::explode, &index);
+		}
 		else score = -1;
 	}
 
 	if (data[1] == 1 || data[5] == 1 || data[2] == 1) {
-		if (roleStatus == Sliding_L || roleStatus == Action_M2L || roleStatus == Action_L2M)
+		if (roleStatus == Sliding_L || roleStatus == Action_M2L || roleStatus == Action_L2M) {
 			score = 1;
+			if (data[2] == 1)
+				_eventDispatcher->dispatchCustomEvent(Message::explode, &index);
+		}
 		else score = -1;
 	}
 
