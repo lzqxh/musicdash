@@ -22,6 +22,7 @@ bool MusicLayer::init() {
 		x = x * d;
 	}
 	x = 0.258;
+	objects.clear();
 	for (int i = 0; i < numbers + 30; i++) {
 		Node* node = Node::create();
 		node->setContentSize(Size(1.28f * roadbg->getContentSize().width, 1));
@@ -33,6 +34,10 @@ bool MusicLayer::init() {
 		x = x * d;
 	}
 	std::reverse(objects.begin(), objects.end());
+
+	auto cache = SpriteFrameCache::getInstance();
+	cache->addSpriteFramesWithFile("mainscence/explode.plist");
+	
 	return true;
 }
 
@@ -42,19 +47,26 @@ void MusicLayer::onEnter() {
 											 CC_CALLBACK_1(MusicLayer::run, this));
 	_eventDispatcher->addCustomEventListener(Message::disp_effect,
 											 CC_CALLBACK_1(MusicLayer::dispEffect, this));
+	_eventDispatcher->addCustomEventListener(Message::explode,
+											 CC_CALLBACK_1(MusicLayer::explode, this));
 }
 
 void MusicLayer::onExit() {
+	_eventDispatcher->removeCustomEventListeners(Message::explode);
+	_eventDispatcher->removeCustomEventListeners(Message::disp_effect);
 	_eventDispatcher->removeCustomEventListeners(Message::next_timeslice);
 	Layer::onExit();
 }
 
 void MusicLayer::run(EventCustom* event) {
+	static int runCount = 0;
+	runCount++;
 	std::vector<std::vector<int> > &data = DataVo::inst()->data;
 	if (DataVo::inst()->data[curTime][8] == 1) {
 		CCLog("%d\n", curTime);
 	}
 	objects[0]->removeAllChildren();
+	auto cache = SpriteFrameCache::getInstance();
 	for (int i = 1; i < objects.size(); i++) {
 		std::vector<Node*> v;
 		for (auto node : objects[i]->getChildren()) v.push_back(node);
@@ -63,9 +75,20 @@ void MusicLayer::run(EventCustom* event) {
 			objects[i]->removeChild(node);
 			objects[i - 1]->addChild(node);
 			node->release();
+
+			if (node->getName() == "explode" && runCount >= 4) {
+				runCount = 0;
+				if (node->getTag() > 11)
+					node->setVisible(false);
+				else {
+					char name[20];
+					sprintf(name, "explode_%d.png", node->getTag());
+					node->setTag(node->getTag() + 1);
+					static_cast<Sprite *>(node)->setDisplayFrame(cache->getSpriteFrameByName(name));
+				}
+			}
 		}
 	}
-//	int index = curTime + objects.size() - 1;
 	int index = curTime + 135;
 	if (index >= DataVo::inst()->musicLength) return;
 	addTrafficCone(index);
@@ -77,13 +100,13 @@ void MusicLayer::run(EventCustom* event) {
 
 void MusicLayer::addTrafficCone(int index) {
 	if (DataVo::inst()->data[index][0]) {
-      	Sprite* sprite = Sprite::create("mainscence/obstacle1.png");
+		Sprite* sprite = Sprite::create("mainscence/obstacle1.png");
 		sprite->setScale(1.5f);
       	sprite->setNormalizedPosition(Vec2(-0.13, 0));
 		objects.back()->addChild(sprite);
 	}
 	if (DataVo::inst()->data[index][1]) {
-      	Sprite* sprite = Sprite::create("mainscence/obstacle1.png");
+		Sprite* sprite = Sprite::create("mainscence/obstacle1.png");
 		sprite->setScale(1.5f);
       	sprite->setNormalizedPosition(Vec2(0.13, 0));
 		objects.back()->addChild(sprite);
@@ -91,16 +114,18 @@ void MusicLayer::addTrafficCone(int index) {
 }
 
 void MusicLayer::addBeer(int index) {
-	if (DataVo::inst()->data[index][2]) {
-      	Sprite* sprite = Sprite::create("mainscence/beer.png");
+	if (DataVo::inst()->data[index][2] == 1) {
+		Sprite* sprite = Sprite::create("mainscence/beer.png");
 		sprite->setScale(1.5f);
       	sprite->setNormalizedPosition(Vec2(-0.13, 0));
+		sprite->setTag(index);
 		objects.back()->addChild(sprite);
 	}
-	if (DataVo::inst()->data[index][3]) {
-      	Sprite* sprite = Sprite::create("mainscence/beer.png");
+	if (DataVo::inst()->data[index][3] == 1) {
+		Sprite* sprite = Sprite::create("mainscence/beer.png");
 		sprite->setScale(1.5f);
       	sprite->setNormalizedPosition(Vec2(0.13, 0));
+		sprite->setTag(index);
 		objects.back()->addChild(sprite);
 	}
 }
@@ -151,19 +176,34 @@ void MusicLayer::addManholeCover(int index) {
 void MusicLayer::dispEffect(EventCustom *e) {
 	int index = objects.size() - 135;
 	objects[index]->removeAllChildren();
-	Vec2 pos(0.2, 0.2);
+	Vec2 pos;
+	pos.x = 0.2;
+	pos.y = 0.2;
 	if (DataVo::inst()->data[curTime][3] == 1) pos.x = 1.0f - pos.x;
+	pos.x = designWidth * pos.x;
+	pos.y = designHeight * pos.y;
 	CCParticleSystem* m_emitter;
 	m_emitter = CCParticleExplosion::create();
 	m_emitter->setTotalParticles(50);
-	m_emitter->setPosVar(ccp(50,50));
-	m_emitter->setLife(0.5);
-	m_emitter->setLifeVar(0.2);
-	m_emitter->setGravity(ccp(10.0, 0));
-	m_emitter->setStartSize(40.0f);
+	m_emitter->setPosVar(ccp(100,100));
+	m_emitter->setLife(0.9);
+	m_emitter->setLifeVar(0.3);
+	m_emitter->setGravity(ccp(20.0, 0));
+	m_emitter->setStartSize(60.0f);
 	m_emitter->setStartSizeVar(5.0f);
 	m_emitter->setTexture( _explosionTexture );
-	m_emitter->setNormalizedPosition(pos);
+	m_emitter->setPosition(pos);
 	this->addChild(m_emitter, 10);
 	m_emitter->setAutoRemoveOnFinish(true);
+}
+
+void MusicLayer::explode(EventCustom *event) {
+	int tag = *static_cast<int *>(event->getUserData());
+	for (auto node : objects) {
+		auto beer = node->getChildByTag(tag);
+		if (beer) {
+			beer->setName("explode");
+			beer->setTag(1);
+		}
+	}
 }

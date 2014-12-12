@@ -20,15 +20,17 @@ bool RoleLayer::init() {
 	return true;
 }
 
-
 void RoleLayer::onEnter() {
 	Layer::onEnter();
 	_eventDispatcher->addCustomEventListener(Message::next_timeslice,
 		CC_CALLBACK_1(RoleLayer::run, this));
+	_eventDispatcher->addCustomEventListener(Message::score,
+		CC_CALLBACK_1(RoleLayer::roleEffect, this));
 }
 
 void RoleLayer::onExit() {
 	_eventDispatcher->removeCustomEventListeners(Message::next_timeslice);
+	_eventDispatcher->removeCustomEventListeners(Message::score);
 	Layer::onExit();
 }
 
@@ -74,30 +76,30 @@ void RoleLayer::run(EventCustom *event) {
 		break;
 	case Action_M2L:
 	case Action_R2M:
-		if (++eventCount >= 10) {
-			eventCount = 0;
+		++eventCount;
+		if (eventCount == 1 || eventCount == 4 || eventCount == 14) {
 			frameName = nextFrameName("left");
 			role->setDisplayFrame(cache->getSpriteFrameByName(frameName));
 		}
-		role->setPosition(role->getPosition().x - 5, role->getPosition().y);
+		role->setPosition(role->getPosition().x - 9, role->getPosition().y);
 		break;
 	case Action_M2R:
 	case Action_L2M:
-		if (++eventCount >= 10) {
-			eventCount = 0;
+		++eventCount;
+		if (eventCount == 1 || eventCount == 4 || eventCount == 14) {
 			frameName = nextFrameName("right");
 			role->setDisplayFrame(cache->getSpriteFrameByName(frameName));
 		}
-		role->setPosition(role->getPosition().x + 5, role->getPosition().y);
+		role->setPosition(role->getPosition().x + 9, role->getPosition().y);
 		break;
 	case Action_JUMP:
 		++eventCount;
 		if (eventCount == 1)
 			role->setDisplayFrame(cache->getSpriteFrameByName("up_0.png"));
 		if (eventCount <= 10)
-			role->setPosition(role->getPosition().x, role->getPosition().y + 15);
-		else if (eventCount > 40 - 10)
-			role->setPosition(role->getPosition().x, role->getPosition().y - 15);
+			role->setPosition(role->getPosition().x, role->getPosition().y + 20);
+		else if (eventCount > 35 - 10)
+			role->setPosition(role->getPosition().x, role->getPosition().y - 20);
 		break;
 
 	default:
@@ -111,6 +113,16 @@ Vec2 RoleLayer::nextM2ULPosition(int index) {
 Vec2 RoleLayer::nextM2URPosition(int index) {
 	return Vec2(11.61f, 3.1f);
 }
+
+void RoleLayer::roleEffect(EventCustom *event) {
+	int score = * static_cast<int *>(event->getUserData());
+	if (score == -1) {
+		role->stopAllActions();
+		role->setVisible(true);
+		role->runAction(Blink::create(0.5, 3));
+	}
+}
+
 std::string RoleLayer::nextFrameName(std::string prefix) {
 	char newFrameName[20];
 	int frameSuf = atoi(frameName.substr(frameName.find('_')+1, 1).c_str());

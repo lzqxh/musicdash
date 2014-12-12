@@ -15,6 +15,7 @@ namespace Message {
 	const std::string score = "score";
 
 	const std::string disp_effect = "disp_effect";
+	const std::string explode = "explode";
 };
 
 

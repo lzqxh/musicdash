@@ -101,6 +101,7 @@ void ControlCenter::checkBeer(int index) {
 	if (data[3] == 1) score = atRight() ? 1 : -1;
 	if (score == 1) {
 		_eventDispatcher->dispatchCustomEvent(Message::disp_effect, nullptr);
+//		_eventDispatcher->dispatchCustomEvent(Message::explode, &index);
 	}
 	staticScore(score);
 }
@@ -142,6 +143,7 @@ void ControlCenter::evalution() {
 void ControlCenter::gameStart() {
 	curTime = 0;
 	_accTime = 0;
+	DataVo::inst()->combos = 0;
 	CocosDenshion::SimpleAudioEngine::getInstance()->
 		playBackgroundMusic(DataVo::inst()->musicFile.c_str());
 	gameStatus = gs_playing;
@@ -183,14 +185,14 @@ void ControlCenter::roleMove() {
 	case Sliding_L:
 		if (lastInput == Message::input_touch_release) {
 			roleStatus = RoleStatus::Action_L2M;
-			DataVo::inst()->actionCount = 20;
+			DataVo::inst()->actionCount = 18;
 			lastInput = "";
 		}
 		break;
 	case Sliding_R:
 		if (lastInput == Message::input_touch_release) {
 			roleStatus = RoleStatus::Action_R2M;
-			DataVo::inst()->actionCount = 20;
+			DataVo::inst()->actionCount = 18;
 			lastInput = "";
 		}
 		break;
@@ -211,17 +213,17 @@ void ControlCenter::roleMove() {
 	case Sliding_M:
 		if (lastInput == Message::input_slide_left) {
 			roleStatus = RoleStatus::Action_M2L;
-			DataVo::inst()->actionCount = 20;
+			DataVo::inst()->actionCount = 18;
 			lastInput = "";
 		}
 		else if (lastInput == Message::input_slide_right) {
 			roleStatus = RoleStatus::Action_M2R;
-			DataVo::inst()->actionCount = 20;
+			DataVo::inst()->actionCount = 18;
 			lastInput = "";
 		}
 		else if (lastInput == Message::input_slide_up) {
 			roleStatus = RoleStatus::Action_JUMP;
-			DataVo::inst()->actionCount = 40;
+			DataVo::inst()->actionCount = 35;
 			lastInput = "";
 		}
         else if (lastInput == Message::input_click) {
@@ -262,26 +264,22 @@ void ControlCenter::receiveInput(EventCustom *event) {
 
 void ControlCenter::showControlMenu(Ref *pSender) {
 	this->gameStatus = gs_pause;
-	Director::getInstance()->pause();
+	CocosDenshion::SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
 	auto restart = MenuItemImage::create("restart.png", "restart.png", [this](Ref *) {
 		this->removeChild(controlMenu);
-		Director::getInstance()->resume();
-		this->gameOver();
 		this->gameStart();
 	});
 	auto stop = MenuItemImage::create("stop.png", "stop.png", [this](Ref *) {
 		this->gameOver();
-		Director::getInstance()->resume();
-		Director::getInstance()->popScene();
 	});
 	auto cancel = MenuItemImage::create("cancel.png", "cancel.png", [this](Ref *) {
 		this->removeChild(controlMenu);
-		Director::getInstance()->resume();
+		CocosDenshion::SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
 		this->gameStatus = gs_playing;
 	});
 	controlMenu = Menu::create(restart, stop, cancel, nullptr);
-//	controlMenu->ignoreAnchorPointForPosition(false);
-//	controlMenu->setAnchorPoint(Point(0.5, 0.5));
+	controlMenu->setAnchorPoint(Point(0.5, 0.5));
+	controlMenu->setPosition(_center);
 	this->addChild(controlMenu, 1000);
 	restart->setPosition(0, 50);
 	stop->setPosition(0, 0);

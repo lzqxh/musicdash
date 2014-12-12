@@ -13,6 +13,8 @@ private:
 	Texture2D* _explosionTexture;
 	void run(EventCustom*);
 	void dispEffect(EventCustom*);
+	void explode(EventCustom*);
+
 	void addTrafficCone(int index);
 	void addBeer(int index);
 	void addBarrier(int index);

@@ -14,6 +14,7 @@ public:
 	virtual void onEnter();
 	virtual void onExit();
 	void run(EventCustom *);
+	void roleEffect(EventCustom *);
 
 	Sprite *role;
 

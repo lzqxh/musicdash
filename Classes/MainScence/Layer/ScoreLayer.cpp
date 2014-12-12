@@ -57,6 +57,8 @@ void ScoreLayer::displayCombos(EventCustom *event) {
 
 void ScoreLayer::displayScore(EventCustom *event) {
 	int ds = *static_cast<int *>(event->getUserData());
+	if (score < 0)
+		score = 0;
 	score += ds;
 	int n = score;
 	for (auto sprite : scoreSprite)
