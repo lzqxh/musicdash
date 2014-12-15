@@ -23,9 +23,9 @@ bool LoginScene::init() {
 	auto xiaoming = Sprite::create("loginscence/xiaoming.png");
 	auto title = LabelTTF::create("MusicDash", "fonts/Marker Felt.ttf", 70);
 	title->setColor(Color3B::BLACK);
-	auto building1 = Sprite::create("building/building1.png");
-	auto building2 = Sprite::create("building/building2.png");
-	auto building3 = Sprite::create("building/building3.png");
+	auto building1 = Sprite::create("building/building_1.png");
+	auto building2 = Sprite::create("building/building_2.png");
+	auto building3 = Sprite::create("building/building_3.png");
 
 	layer->addChild(loading, 1000);
 	layer->addChild(backGround, -1000);

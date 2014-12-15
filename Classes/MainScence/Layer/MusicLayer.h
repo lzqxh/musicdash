@@ -20,6 +20,7 @@ private:
 	void addBarrier(int index);
 	void addRailing(int index);
 	void addManholeCover(int index);
+	void addBuilding();
 
 public:
 	virtual bool init();

@@ -100,8 +100,8 @@ void ControlCenter::checkBeer(int index) {
 	if (data[2] == 1) score = atLeft() ? 1 : -1;
 	if (data[3] == 1) score = atRight() ? 1 : -1;
 	if (score == 1) {
-		_eventDispatcher->dispatchCustomEvent(Message::disp_effect, nullptr);
-//		_eventDispatcher->dispatchCustomEvent(Message::explode, &index);
+//		_eventDispatcher->dispatchCustomEvent(Message::disp_effect, nullptr);
+		_eventDispatcher->dispatchCustomEvent(Message::explode, &index);
 	}
 	staticScore(score);
 }

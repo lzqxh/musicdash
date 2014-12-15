@@ -9,13 +9,19 @@ bool MusicLayer::init() {
 	if (!Layer::init()) return false; 
 	_explosionTexture = TextureCache::getInstance()->addImage("mainscence/explosion.png");
 
+	auto bg = Sprite::create("mainscence/bg.jpg");
+	bg->setScale(PNG_SCALE);
+	bg->setPosition(_center);
+	addChild(bg);
+
 	auto roadbg = Sprite::create("mainscence/road.png");
 	roadbg->setScale(PNG_SCALE);
 	roadbg->setPosition(_center);
 	addChild(roadbg);
 
 	int numbers = 150;
-	float d = pow(1.28 / 0.258, 1.0 / (numbers - 1));
+//	float d = pow(1.28 / 0.258, 1.0 / (numbers - 1));
+	float d = 1.0105349152832204381907932438556f;
 	float x = 0.258, y = 1.0, tolx = 0, toly = 1.0;
 	for (int i = 0; i < numbers; i++) {
 		tolx += x;
@@ -59,8 +65,7 @@ void MusicLayer::onExit() {
 }
 
 void MusicLayer::run(EventCustom* event) {
-	static int runCount = 0;
-	runCount++;
+	addBuilding();
 	std::vector<std::vector<int> > &data = DataVo::inst()->data;
 	if (DataVo::inst()->data[curTime][8] == 1) {
 		CCLog("%d\n", curTime);
@@ -74,19 +79,26 @@ void MusicLayer::run(EventCustom* event) {
 			node->retain();
 			objects[i]->removeChild(node);
 			objects[i - 1]->addChild(node);
-			node->release();
 
-			if (node->getName() == "explode" && runCount >= 4) {
-				runCount = 0;
-				if (node->getTag() > 11)
-					node->setVisible(false);
-				else {
-					char name[20];
-					sprintf(name, "explode_%d.png", node->getTag());
-					node->setTag(node->getTag() + 1);
-					static_cast<Sprite *>(node)->setDisplayFrame(cache->getSpriteFrameByName(name));
+			if (node->getName() == "explode") {
+				int runCount = node->getTag();
+				node->setTag(node->getTag() + 1);
+				if (runCount % 4 == 1) {
+					int k = runCount / 4 + 1;
+					if (k > 11)
+						node->setVisible(false);
+					else {
+						char name[20];
+						sprintf(name, "explode_%d.png", k);
+						static_cast<Sprite *>(node)->setDisplayFrame(cache->getSpriteFrameByName(name));
+					}
+				}
+				if (runCount % 3 == 0) {
+					objects[i - 1]->removeChild(node);
+					objects[i]->addChild(node);
 				}
 			}
+			node->release();
 		}
 	}
 	int index = curTime + 135;
@@ -98,15 +110,41 @@ void MusicLayer::run(EventCustom* event) {
 	addManholeCover(index);
 }
 
+void MusicLayer::addBuilding() {
+	static int lastL = 0, lastR = 0;
+	int interval = 35, k;
+	if (++lastL >= interval) {
+		k = rand() % 4 + 1;
+		lastL = 0;
+		std::string url = "building/building_" + std::to_string(k) + ".png";
+		Sprite* sprite = Sprite::create(url);
+		sprite->setScale(1.5f);
+		sprite->setAnchorPoint(ccp(1.0f, 0.5f));
+      	sprite->setNormalizedPosition(Vec2(-0.51, 0));
+		objects.back()->addChild(sprite);
+	}
+	if (++lastR >= interval) {
+		lastR = 0;
+		k = rand() % 4 + 1;
+		lastL = 0;
+		std::string url = "building/building_" + std::to_string(k) + ".png";
+		Sprite* sprite = Sprite::create(url);
+		sprite->setScale(1.5f);
+		sprite->setFlipX(true);
+		sprite->setAnchorPoint(ccp(0.0f, 0.5f));
+      	sprite->setNormalizedPosition(Vec2(0.51, 0));
+		objects.back()->addChild(sprite);
+	}
+}
 void MusicLayer::addTrafficCone(int index) {
 	if (DataVo::inst()->data[index][0]) {
-		Sprite* sprite = Sprite::create("mainscence/obstacle1.png");
+		Sprite* sprite = Sprite::create("mainscence/obstacle.png");
 		sprite->setScale(1.5f);
       	sprite->setNormalizedPosition(Vec2(-0.13, 0));
 		objects.back()->addChild(sprite);
 	}
 	if (DataVo::inst()->data[index][1]) {
-		Sprite* sprite = Sprite::create("mainscence/obstacle1.png");
+		Sprite* sprite = Sprite::create("mainscence/obstacle.png");
 		sprite->setScale(1.5f);
       	sprite->setNormalizedPosition(Vec2(0.13, 0));
 		objects.back()->addChild(sprite);
@@ -204,6 +242,8 @@ void MusicLayer::explode(EventCustom *event) {
 		if (beer) {
 			beer->setName("explode");
 			beer->setTag(1);
+			beer->setScale(5.2f);
 		}
 	}
 }
+

@@ -57,16 +57,15 @@ void DataVo::resolve(unsigned char *pBuffer, int st, int ed) {
 		}
 	if (time < 0 || type < 0) return;
 	if (last < 0) last = 0;
-	CCLog("%d %d %d", time, type, last);
+	if (type == 7) type = 8;
+	else type --;
 
 	int index = time / TIMESLICE_SIZE;
-    CCLog("index %d", index);
     while (index >= data.size())
     	data.push_back(std::vector<int>(9, false));
     data[index][type] = 1;
     while ((index + 1) * TIMESLICE_SIZE <= time + last) {
     	index++;
-    	CCLog("%d", index);
     	while (index >= data.size())
     		data.push_back(std::vector<int>(9, false));
     	data[index][type] = data[index - 1][type] + 1;
