@@ -20,14 +20,13 @@ void UiLayer::showControlMenu(Ref *pSender) {
 		_eventDispatcher->dispatchCustomEvent(Message::game_restart, nullptr);
 	});
 	auto stop = MenuItemImage::create("stop.png", "stop.png", [this](Ref *) {
-		//this->gameOver();
+		this->removeChild(controlMenu);
 		_eventDispatcher->dispatchCustomEvent(Message::game_stop, nullptr);
 	});
 	auto cancel = MenuItemImage::create("cancel.png", "cancel.png", [this](Ref *) {
 		this->removeChild(controlMenu);
 		CocosDenshion::SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
 		_eventDispatcher->dispatchCustomEvent(Message::game_resume, nullptr);
-		//kthis->gameStatus = gs_playing;
 	});
 	controlMenu = Menu::create(restart, stop, cancel, nullptr);
 	controlMenu->setAnchorPoint(Point(0.5, 0.5));

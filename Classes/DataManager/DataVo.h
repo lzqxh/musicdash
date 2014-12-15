@@ -45,6 +45,7 @@ public:
 	RoleStatus _roleStatus;
 	int actionCount;
 	int combos;
+	int score;
 	int _curTime;
 
 	//ÓÎÏ·ËÙ¶È

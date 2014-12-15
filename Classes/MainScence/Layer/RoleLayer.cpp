@@ -43,6 +43,7 @@ void RoleLayer::run(EventCustom *event) {
 	lastRoleStatus = roleStatus;
 	switch(roleStatus) {
 	case Sliding_M:
+		role->setPosition(designWidth/2, 200);
 	case Sliding_L:
 	case Sliding_R:
 		if (++eventCount < 10)
@@ -77,20 +78,20 @@ void RoleLayer::run(EventCustom *event) {
 	case Action_M2L:
 	case Action_R2M:
 		++eventCount;
-		if (eventCount == 1 || eventCount == 4 || eventCount == 14) {
+		if (eventCount == 1 || eventCount == 4 || eventCount == 16 - 4) {
 			frameName = nextFrameName("left");
 			role->setDisplayFrame(cache->getSpriteFrameByName(frameName));
 		}
-		role->setPosition(role->getPosition().x - 9, role->getPosition().y);
+		role->setPosition(role->getPosition().x - 8, role->getPosition().y);
 		break;
 	case Action_M2R:
 	case Action_L2M:
 		++eventCount;
-		if (eventCount == 1 || eventCount == 4 || eventCount == 14) {
+		if (eventCount == 1 || eventCount == 4 || eventCount == 16 - 4) {
 			frameName = nextFrameName("right");
 			role->setDisplayFrame(cache->getSpriteFrameByName(frameName));
 		}
-		role->setPosition(role->getPosition().x + 9, role->getPosition().y);
+		role->setPosition(role->getPosition().x + 8, role->getPosition().y);
 		break;
 	case Action_JUMP:
 		++eventCount;

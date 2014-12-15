@@ -32,7 +32,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     // create a scene. it's an autorelease object
     auto scene = LoginScene::create();
-//    auto scene = GameWorld::create();
+    //auto scene = GameWorld::create();
 
     // run
     director->runWithScene(scene);

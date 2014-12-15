@@ -22,6 +22,7 @@ bool ControlCenter::init() {
 
 	auto cache = SpriteFrameCache::getInstance();
 	cache->addSpriteFramesWithFile("mainscence/count.plist");
+	cache->addSpriteFramesWithFile("mainscence/gameover.plist");
 
 	roleStatus = Sliding_M;
 
@@ -52,33 +53,7 @@ void ControlCenter::onEnter() {
 											 CC_CALLBACK_1(ControlCenter::gameOver, this));
 	CCLog("on Enter\n");
 	//直接开始～
-	auto cache = SpriteFrameCache::getInstance();
-	auto sprite = Sprite::create();
-	sprite->setPosition(ccp(_center.x, _center.y + 150));
-	this->addChild(sprite);
-
-	sprite->setDisplayFrame(cache->getSpriteFrameByName("count_3.png"));
-	auto action = CCSequence::create(
-		DelayTime::create(1.0f),
-		CCCallFunc::create([sprite, cache](){
-			sprite->setDisplayFrame(cache->getSpriteFrameByName("count_2.png"));
-		}),
-		DelayTime::create(1.0f),
-		CCCallFunc::create([sprite, cache](){
-			sprite->setDisplayFrame(cache->getSpriteFrameByName("count_1.png"));
-		}),
-		DelayTime::create(1.0f),
-		CCCallFunc::create([sprite, cache](){
-			sprite->setDisplayFrame(cache->getSpriteFrameByName("count_go.png"));
-		}),
-		DelayTime::create(1.0f),
-		CCCallFunc::create([sprite, this](){
-			this->removeChild(sprite);;
-			this->_eventDispatcher->dispatchCustomEvent(Message::game_restart, nullptr);
-		}),
-		nullptr
-		);
-	sprite->runAction(action);
+	this->_eventDispatcher->dispatchCustomEvent(Message::game_restart, nullptr);
 }
 
 void ControlCenter::onExit() {
@@ -177,12 +152,40 @@ void ControlCenter::evalution() {
 }
 
 void ControlCenter::gameStart(EventCustom* e = nullptr) {
-	curTime = 0;
-	_accTime = 0;
-	DataVo::inst()->combos = 0;
-	CocosDenshion::SimpleAudioEngine::getInstance()->
-		playBackgroundMusic(DataVo::inst()->musicFile.c_str());
-	gameStatus = gs_playing;
+	auto cache = SpriteFrameCache::getInstance();
+	auto sprite = Sprite::create();
+	sprite->setPosition(ccp(_center.x, _center.y + 150));
+	this->addChild(sprite);
+
+	sprite->setDisplayFrame(cache->getSpriteFrameByName("count_3.png"));
+	auto action = CCSequence::create(
+		DelayTime::create(1.0f),
+		CCCallFunc::create([sprite, cache](){
+			sprite->setDisplayFrame(cache->getSpriteFrameByName("count_2.png"));
+		}),
+		DelayTime::create(1.0f),
+		CCCallFunc::create([sprite, cache](){
+			sprite->setDisplayFrame(cache->getSpriteFrameByName("count_1.png"));
+		}),
+		DelayTime::create(1.0f),
+		CCCallFunc::create([sprite, cache](){
+			sprite->setDisplayFrame(cache->getSpriteFrameByName("count_go.png"));
+		}),
+		DelayTime::create(0.3f),
+		CCCallFunc::create([sprite, this](){
+			this->removeChild(sprite);;
+			curTime = 0;
+			_accTime = 0;
+			DataVo::inst()->combos = 0;
+			DataVo::inst()->score = 0;
+			while (!inputQue.empty()) inputQue.pop();
+			CocosDenshion::SimpleAudioEngine::getInstance()->
+				playBackgroundMusic(DataVo::inst()->musicFile.c_str());
+			gameStatus = gs_playing;
+		}),
+		nullptr
+		);
+	sprite->runAction(action);
 }
 
 void ControlCenter::gameOver(EventCustom* event = nullptr) {
@@ -191,8 +194,45 @@ void ControlCenter::gameOver(EventCustom* event = nullptr) {
 		stopBackgroundMusic();
 	CocosDenshion::SimpleAudioEngine::getInstance()->
 		playBackgroundMusic("loginscence/bg.mp3", true);
-	auto scene = SongSelectionScene::create();
-	Director::getInstance()->replaceScene(scene);
+	auto cache = SpriteFrameCache::getInstance();
+	auto bg = Sprite::create();
+	bg->setDisplayFrame(cache->getSpriteFrameByName("gameover_bg.png"));
+	bg->setPosition(ccp(_center.x, _center.y + 100));
+	bg->setAnchorPoint(ccp(0.5, 0.5));
+	bg->setScale(2.7f);
+
+	int n = DataVo::inst()->score;
+	auto scoreLabel = LabelTTF::create(std::to_string(n), "fonts/Marker Felt.ttf", 27);
+	scoreLabel->setAnchorPoint(ccp(1.0, 0.5));
+	scoreLabel->setPosition(215, 223);
+	bg->addChild(scoreLabel, 10);
+
+	auto button1 = MenuItemImage::create();
+	button1->setNormalSpriteFrame(cache->getSpriteFrameByName("gameover_restart_1.png"));
+	button1->setSelectedSpriteFrame(cache->getSpriteFrameByName("gameover_restart_2.png"));
+	button1->setScale(2.7f);
+	button1->setPosition(ccp(-170, 0));
+
+	auto button2 = MenuItemImage::create();
+	button2->setNormalSpriteFrame(cache->getSpriteFrameByName("gameover_back_1.png"));
+	button2->setSelectedSpriteFrame(cache->getSpriteFrameByName("gameover_back_2.png"));
+	button2->setScale(2.7f);
+	button2->setPosition(ccp(0, 0));
+
+	auto menu = Menu::create(button1, button2, nullptr);
+	menu->setPosition(_center.x, 135);
+	this->addChild(bg);
+	this->addChild(menu);
+
+	button1->setCallback([this, bg, menu](Ref *){
+		this->removeChild(bg);
+		this->removeChild(menu);
+		this->_eventDispatcher->dispatchCustomEvent(Message::game_restart, nullptr);
+	});
+	button2->setCallback([&](Ref *){
+		auto scene = SongSelectionScene::create();
+		Director::getInstance()->replaceScene(scene);
+	});
 	return;
 }
 
@@ -214,6 +254,13 @@ void ControlCenter::roleMove() {
 	auto &data = DataVo::inst()->data;
 	std::string lastInput = "";
 	while (!inputQue.empty()) {
+		if (inputQue.front().second == Message::input_touch_release) {
+			if (roleStatus == Action_M2L || roleStatus == Action_M2R || 
+				roleStatus == Sliding_L || roleStatus == Sliding_R) {
+				lastInput = inputQue.front().second;
+				break;
+			}
+		}
 		if (curTime - inputQue.front().first > 25) inputQue.pop();
 		else {
 			lastInput = inputQue.front().second;
@@ -273,12 +320,12 @@ void ControlCenter::roleMove() {
 	case Sliding_M:
 		if (lastInput == Message::input_slide_left) {
 			roleStatus = RoleStatus::Action_M2L;
-			DataVo::inst()->actionCount = 18;
+			DataVo::inst()->actionCount = 16;
 			lastInput = "";
 		}
 		else if (lastInput == Message::input_slide_right) {
 			roleStatus = RoleStatus::Action_M2R;
-			DataVo::inst()->actionCount = 18;
+			DataVo::inst()->actionCount = 16;
 			lastInput = "";
 		}
 		else if (lastInput == Message::input_slide_up) {
