@@ -18,6 +18,7 @@ enum GameStatus {
 class ControlCenter: public CCNode {
 private:
 	float _accTime;
+	std::queue<std::pair<int, std::string> > inputQue;
 	std::string lastInput;
 	void roleMove();
 	void evalution();

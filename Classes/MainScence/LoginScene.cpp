@@ -15,6 +15,9 @@ bool LoginScene::init() {
 	mainMenu->setContentSize(startButton->getContentSize());
 	layer->addChild(mainMenu, 1000);
 
+	CocosDenshion::SimpleAudioEngine::getInstance()->
+		playBackgroundMusic("loginscence/bg.mp3", true);
+
 	//¿ª³¡¶¯»­
 	auto loading = Sprite::create("loginscence/loading.png");
 	auto backGround = Sprite::create("loginscence/login1.png");

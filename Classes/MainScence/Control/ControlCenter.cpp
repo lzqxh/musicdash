@@ -153,6 +153,8 @@ void ControlCenter::gameOver() {
 	gameStatus = gs_over;
 	CocosDenshion::SimpleAudioEngine::getInstance()->
 		stopBackgroundMusic();
+	CocosDenshion::SimpleAudioEngine::getInstance()->
+		playBackgroundMusic("loginscence/bg.mp3", true);
 	auto scene = SongSelectionScene::create();
 	Director::getInstance()->replaceScene(scene);
 	return;
@@ -160,6 +162,14 @@ void ControlCenter::gameOver() {
 
 void ControlCenter::roleMove() {
 	auto &data = DataVo::inst()->data;
+	std::string lastInput = "";
+	while (!inputQue.empty()) {
+		if (curTime - inputQue.front().first > 25) inputQue.pop();
+		else {
+			lastInput = inputQue.front().second;
+			break;
+		}
+	}
 	switch (roleStatus) {
 	case Action_L2M:
 	case Action_R2M:
@@ -232,7 +242,6 @@ void ControlCenter::roleMove() {
         		if (data[i][6]) upL = true;
         		if (data[i][7]) upR = true;
         	}
-			CCLog("%d %d\n", upL, upR);
         	if (upL || upR) {
         		roleStatus = upL ? RoleStatus::Action_M2UL : RoleStatus::Action_M2UR;
         		DataVo::inst()->actionCount = 14;
@@ -241,6 +250,13 @@ void ControlCenter::roleMove() {
         }
         break;
 	};
+
+	if (lastInput == "" && !inputQue.empty()) {
+		if (inputQue.front().second != Message::input_touch_release)
+			CocosDenshion::SimpleAudioEngine::getInstance()->
+				playEffect("input.wav");
+		inputQue.pop();
+	}
 }
 void ControlCenter::fixedUpdate(float dt) {
 	if (gameStatus != gs_playing) return;
@@ -259,7 +275,7 @@ void ControlCenter::fixedUpdate(float dt) {
 
 
 void ControlCenter::receiveInput(EventCustom *event) {
-	lastInput = event->getEventName();
+	inputQue.push(std::make_pair(curTime, event->getEventName()));
 }
 
 void ControlCenter::showControlMenu(Ref *pSender) {
