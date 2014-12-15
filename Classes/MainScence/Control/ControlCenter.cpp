@@ -20,13 +20,10 @@ bool ControlCenter::init() {
 	auto inputCenter= InputCenter::create();
 	addChild(inputCenter);
 
-	roleStatus = Sliding_M;
+	auto cache = SpriteFrameCache::getInstance();
+	cache->addSpriteFramesWithFile("mainscence/count.plist");
 
-	auto pauseButtonItem = MenuItemImage::create("CloseNormal.png", "CloseSelected.png",
-		CC_CALLBACK_1(ControlCenter::showControlMenu, this));
-	pauseButton = Menu::create(pauseButtonItem, nullptr);
-	pauseButton->setPosition(50, designHeight-50);
-	addChild(pauseButton, 1000);
+	roleStatus = Sliding_M;
 
 	return true;
 }
@@ -45,13 +42,52 @@ void ControlCenter::onEnter() {
 	_eventDispatcher->addCustomEventListener(Message::input_click,
 											 CC_CALLBACK_1(ControlCenter::receiveInput, this));
 
+	_eventDispatcher->addCustomEventListener(Message::game_pause,
+											 CC_CALLBACK_1(ControlCenter::gamePause, this));
+	_eventDispatcher->addCustomEventListener(Message::game_resume,
+											 CC_CALLBACK_1(ControlCenter::gameResume, this));
+	_eventDispatcher->addCustomEventListener(Message::game_restart,
+											 CC_CALLBACK_1(ControlCenter::gameStart, this));
+	_eventDispatcher->addCustomEventListener(Message::game_stop,
+											 CC_CALLBACK_1(ControlCenter::gameOver, this));
 	CCLog("on Enter\n");
 	//直接开始～
-	gameStart();
+	auto cache = SpriteFrameCache::getInstance();
+	auto sprite = Sprite::create();
+	sprite->setPosition(ccp(_center.x, _center.y + 150));
+	this->addChild(sprite);
+
+	sprite->setDisplayFrame(cache->getSpriteFrameByName("count_3.png"));
+	auto action = CCSequence::create(
+		DelayTime::create(1.0f),
+		CCCallFunc::create([sprite, cache](){
+			sprite->setDisplayFrame(cache->getSpriteFrameByName("count_2.png"));
+		}),
+		DelayTime::create(1.0f),
+		CCCallFunc::create([sprite, cache](){
+			sprite->setDisplayFrame(cache->getSpriteFrameByName("count_1.png"));
+		}),
+		DelayTime::create(1.0f),
+		CCCallFunc::create([sprite, cache](){
+			sprite->setDisplayFrame(cache->getSpriteFrameByName("count_go.png"));
+		}),
+		DelayTime::create(1.0f),
+		CCCallFunc::create([sprite, this](){
+			this->removeChild(sprite);;
+			this->_eventDispatcher->dispatchCustomEvent(Message::game_restart, nullptr);
+		}),
+		nullptr
+		);
+	sprite->runAction(action);
 }
 
 void ControlCenter::onExit() {
 	CCLog("on Exit\n");
+	_eventDispatcher->removeCustomEventListeners(Message::game_stop);
+	_eventDispatcher->removeCustomEventListeners(Message::game_restart);
+	_eventDispatcher->removeCustomEventListeners(Message::game_resume);
+	_eventDispatcher->removeCustomEventListeners(Message::game_pause);
+
 	_eventDispatcher->removeCustomEventListeners(Message::input_click);
 	_eventDispatcher->removeCustomEventListeners(Message::input_touch_release);
 	_eventDispatcher->removeCustomEventListeners(Message::input_slide_left);
@@ -140,7 +176,7 @@ void ControlCenter::evalution() {
 	checkManholeCover(curTime);
 }
 
-void ControlCenter::gameStart() {
+void ControlCenter::gameStart(EventCustom* e = nullptr) {
 	curTime = 0;
 	_accTime = 0;
 	DataVo::inst()->combos = 0;
@@ -149,7 +185,7 @@ void ControlCenter::gameStart() {
 	gameStatus = gs_playing;
 }
 
-void ControlCenter::gameOver() {
+void ControlCenter::gameOver(EventCustom* event = nullptr) {
 	gameStatus = gs_over;
 	CocosDenshion::SimpleAudioEngine::getInstance()->
 		stopBackgroundMusic();
@@ -157,6 +193,20 @@ void ControlCenter::gameOver() {
 		playBackgroundMusic("loginscence/bg.mp3", true);
 	auto scene = SongSelectionScene::create();
 	Director::getInstance()->replaceScene(scene);
+	return;
+}
+
+void ControlCenter::gamePause(EventCustom* event = nullptr) {
+	gameStatus = gs_pause;
+	CocosDenshion::SimpleAudioEngine::getInstance()->
+		pauseBackgroundMusic();
+	return;
+}
+
+void ControlCenter::gameResume(EventCustom* event = nullptr) {
+	gameStatus = gs_playing;
+	CocosDenshion::SimpleAudioEngine::getInstance()->
+		resumeBackgroundMusic();
 	return;
 }
 
@@ -278,26 +328,3 @@ void ControlCenter::receiveInput(EventCustom *event) {
 	inputQue.push(std::make_pair(curTime, event->getEventName()));
 }
 
-void ControlCenter::showControlMenu(Ref *pSender) {
-	this->gameStatus = gs_pause;
-	CocosDenshion::SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
-	auto restart = MenuItemImage::create("restart.png", "restart.png", [this](Ref *) {
-		this->removeChild(controlMenu);
-		this->gameStart();
-	});
-	auto stop = MenuItemImage::create("stop.png", "stop.png", [this](Ref *) {
-		this->gameOver();
-	});
-	auto cancel = MenuItemImage::create("cancel.png", "cancel.png", [this](Ref *) {
-		this->removeChild(controlMenu);
-		CocosDenshion::SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
-		this->gameStatus = gs_playing;
-	});
-	controlMenu = Menu::create(restart, stop, cancel, nullptr);
-	controlMenu->setAnchorPoint(Point(0.5, 0.5));
-	controlMenu->setPosition(_center);
-	this->addChild(controlMenu, 1000);
-	restart->setPosition(0, 50);
-	stop->setPosition(0, 0);
-	cancel->setPosition(0, -50);
-}

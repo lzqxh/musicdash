@@ -37,8 +37,6 @@ private:
 public:
 	void receiveInput(EventCustom*);
 	GameStatus gameStatus;
-	Menu *pauseButton;
-	Menu *controlMenu;
 
 	virtual bool init();
 	CREATE_FUNC(ControlCenter);
@@ -49,10 +47,10 @@ public:
 
 	void fixedUpdate(float);
 
-	void gameStart();
-	void gameOver();
-
-	void showControlMenu(Ref *);
+	void gameStart(EventCustom*);
+	void gameOver(EventCustom*);
+	void gamePause(EventCustom*);
+	void gameResume(EventCustom*);
 };
 
 #endif //__CONTROL_CENTER_H__

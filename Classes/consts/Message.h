@@ -16,6 +16,11 @@ namespace Message {
 
 	const std::string disp_effect = "disp_effect";
 	const std::string explode = "explode";
+
+	const std::string game_pause = "game_pause";
+	const std::string game_stop = "game_stop";
+	const std::string game_restart = "game_restart";
+	const std::string game_resume = "game_resume";
 };
 
 
