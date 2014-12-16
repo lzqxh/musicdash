@@ -10,6 +10,10 @@ bool SongSelectionScene::init() {
 	bg = Layer::create();
 	addChild(bg);
 
+	auto pic = Sprite::create("mainscence/bg.jpg");
+	pic->setAnchorPoint(Point(0,0));
+	bg->addChild(pic, -1000);
+
 	auto backButton = MenuItemImage::create("CloseNormal.png", "CloseSelected.png",
 		[this](Ref *){Director::getInstance()->popScene();});
 	menu = Menu::create(backButton, nullptr);

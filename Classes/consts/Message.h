@@ -21,6 +21,8 @@ namespace Message {
 	const std::string game_stop = "game_stop";
 	const std::string game_restart = "game_restart";
 	const std::string game_resume = "game_resume";
+
+	const std::string get_beer = "get_beer";
 };
 
 

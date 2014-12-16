@@ -13,9 +13,11 @@ USING_NS_CC;
 class ScoreLayer : public Layer {
 private:
 	std::vector <Sprite *> scoreSprite;
-	int score;
 	LabelTTF *label1, *label2;
+	LabelBMFont *label;
 public:
+	static int score;
+	Sprite *scoreBox;
 	virtual bool init();
 	CREATE_FUNC(ScoreLayer);
 	virtual void onEnter();

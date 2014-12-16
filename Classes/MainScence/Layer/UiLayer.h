@@ -13,5 +13,17 @@ public:
 	Menu *pauseButton;
 	Menu *controlMenu;
 	void showControlMenu(Ref *);
+
+	Sprite *progress;
+	Sprite *head;
+	Sprite *energy;
+	int energyValue;
+
+	virtual void onEnter();
+	virtual void onExit();
+
+	void update(float dt) override;
+	void energyUp(EventCustom *);
+
 };
 #endif //__UI_LAYER_H__

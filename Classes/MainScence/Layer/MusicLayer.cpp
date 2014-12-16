@@ -16,7 +16,7 @@ bool MusicLayer::init() {
 
 	auto roadbg = Sprite::create("mainscence/road.png");
 	roadbg->setScale(PNG_SCALE);
-	roadbg->setPosition(_center);
+	roadbg->setPosition(designWidth/2, designHeight/2-50);
 	addChild(roadbg);
 
 	int numbers = 150;
@@ -41,9 +41,6 @@ bool MusicLayer::init() {
 	}
 	std::reverse(objects.begin(), objects.end());
 
-	auto cache = SpriteFrameCache::getInstance();
-	cache->addSpriteFramesWithFile("mainscence/explode.plist");
-	
 	return true;
 }
 

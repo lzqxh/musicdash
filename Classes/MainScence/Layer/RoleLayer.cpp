@@ -7,7 +7,6 @@ bool RoleLayer::init() {
 	if (!Layer::init()) return false;
 
 	auto cache = SpriteFrameCache::getInstance();
-	cache->addSpriteFramesWithFile("rolemove/rolemove.plist");
 
 	role = Sprite::create();
 	role->setSpriteFrame(cache->getSpriteFrameByName("slide_0.png"));

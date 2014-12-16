@@ -20,10 +20,6 @@ bool ControlCenter::init() {
 	auto inputCenter= InputCenter::create();
 	addChild(inputCenter);
 
-	auto cache = SpriteFrameCache::getInstance();
-	cache->addSpriteFramesWithFile("mainscence/count.plist");
-	cache->addSpriteFramesWithFile("mainscence/gameover.plist");
-
 	roleStatus = Sliding_M;
 
 	return true;
@@ -113,6 +109,7 @@ void ControlCenter::checkBeer(int index) {
 	if (score == 1) {
 //		_eventDispatcher->dispatchCustomEvent(Message::disp_effect, nullptr);
 		_eventDispatcher->dispatchCustomEvent(Message::explode, &index);
+		_eventDispatcher->dispatchCustomEvent(Message::get_beer, &index);
 	}
 	staticScore(score);
 }

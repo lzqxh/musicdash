@@ -3,11 +3,17 @@
 #include "consts/ResolutionConst.h"
 #include "DataManager/DataVo.h"
 
+int ScoreLayer::score = 0;
+
 bool ScoreLayer::init() {
 	if (!Layer::init()) return false;
-	score = 0;
-	auto cache = SpriteFrameCache::getInstance();
-	cache->addSpriteFramesWithFile("numbers/score.plist");
+//	label = LabelBMFont::create("!\"#$%&'()*+,", "numbers/score-export.fnt");
+	//addChild(label);
+	//label->setPosition(designWidth/2, designHeight/2);
+	scoreBox = Sprite::create("mainscence/scoreBox.png");
+	addChild(scoreBox);
+	scoreBox->setPosition(designWidth - 110, designHeight - 50);
+	scoreBox->setScale(0.5);
 
 	return true;
 }
