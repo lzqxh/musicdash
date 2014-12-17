@@ -20,7 +20,6 @@ bool ControlCenter::init() {
 	auto inputCenter= InputCenter::create();
 	addChild(inputCenter);
 
-	roleStatus = Sliding_M;
 
 	return true;
 }
@@ -149,6 +148,7 @@ void ControlCenter::evalution() {
 }
 
 void ControlCenter::gameStart(EventCustom* e = nullptr) {
+	roleStatus = Sliding_M;
 	for (curTime = -300; curTime < 0; curTime++)
 		_eventDispatcher->dispatchCustomEvent(Message::next_timeslice, nullptr);
 	auto cache = SpriteFrameCache::getInstance();
