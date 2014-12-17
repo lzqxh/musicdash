@@ -128,7 +128,7 @@ void ControlCenter::checkBeer(int index) {
 	int score = 0;
 	if (data[2] == 1) score = atLeft();
 	if (data[3] == 1) score = atRight();
-	if (score == 1) {
+	if (score) {
 //		_eventDispatcher->dispatchCustomEvent(Message::disp_effect, nullptr);
 		_eventDispatcher->dispatchCustomEvent(Message::explode, &index);
 		_eventDispatcher->dispatchCustomEvent(Message::get_beer, &index);

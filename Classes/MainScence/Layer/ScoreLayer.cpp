@@ -54,7 +54,7 @@ void ScoreLayer::displayCombos(EventCustom *event) {
 	if (score != -1) {
 		auto l3 = LabelBMFont::create(std::to_string(DataVo::inst()->combos), "fonts/number_1.fnt", 35);
 		l3->setScale(0.7f);
-		l3->setPosition(0, -50);
+		l3->setPosition(0, -10);
 		label->addChild(l3);
 	}
 
