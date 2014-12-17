@@ -127,7 +127,7 @@ bool LoginScene::init() {
 	building4->runAction(Sequence::create(delay, building41, nullptr));
 	auto building51 = MoveBy::create(actionTime, Vec2(0, -designHeight/2 - 30));
 	building5->runAction(Sequence::create(delay, building51, nullptr));
-	auto mainMenu1 = MoveBy::create(actionTime, Vec2(0, designHeight/2));
+	auto mainMenu1 = MoveBy::create(actionTime, Vec2(0, designHeight/2 - 20));
 	mainMenu->runAction(Sequence::create(delay, mainMenu1, nullptr));
 	auto logo1 = FadeIn::create(actionTime);
 	logo->runAction(Sequence::create(delay, logo1, nullptr));
@@ -160,5 +160,5 @@ void LoginScene::onEnter() {
 
 void LoginScene::onStartButtonClicked(Ref *pSender) {
 	auto songSelection = SongSelectionScene::create();
-	Director::getInstance()->pushScene(songSelection);
+	Director::getInstance()->pushScene(TransitionFade::create(0.5,songSelection));
 }

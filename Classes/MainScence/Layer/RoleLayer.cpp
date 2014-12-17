@@ -119,7 +119,24 @@ void RoleLayer::roleEffect(EventCustom *event) {
 	if (score == -1) {
 		role->stopAllActions();
 		role->setVisible(true);
-		role->runAction(Blink::create(0.5, 3));
+		role->runAction(Blink::create(0.5, 2));
+
+		auto shake = MoveBy::create(0.1, Vec2(-20, 0));
+		auto scene = Director::getInstance()->getRunningScene();
+		scene->stopAllActions();
+		scene->setPosition(0, 0);
+		scene->runAction(
+			Sequence::create(
+			shake, shake->reverse(), shake, shake->reverse(), nullptr));
+
+		auto hit = Sprite::create("mainscence/hit.png");
+		role->addChild(hit);
+		hit->setScale(2);
+		hit->setPosition(0, 800);
+		hit->runAction(Sequence::create(
+			DelayTime::create(0.5),
+			RemoveSelf::create(),
+			nullptr));
 	}
 }
 

@@ -28,7 +28,7 @@ bool UiLayer::init() {
 	energy = Sprite::create();
 	addChild(energy);
 	energy->setAnchorPoint(Point(0, 0));
-	energy->setPosition(designWidth - 100, 100);
+	energy->setPosition(designWidth - 100, designHeight - 300);
 	energy->setScale(0.4);
 	energy->setDisplayFrame(cache->getSpriteFrameByName("energy_0.png"));
 	energyValue = 0;
@@ -45,7 +45,8 @@ void UiLayer::onEnter() {
 	auto listener = EventListenerTouchOneByOne::create();
 	listener->onTouchBegan = [this](Touch *touch, Event *event)->bool{
 		auto location = touch->getLocation();
-		auto rect = Rect(designWidth - 100, 100,
+		auto origin = energy->getPosition();
+		auto rect = Rect(origin.x, origin.y,
 			energy->getDisplayFrame()->getOriginalSize().width * energy->getScale(),
 			energy->getDisplayFrame()->getOriginalSize().height * energy->getScale());
 
