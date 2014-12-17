@@ -23,10 +23,10 @@ private:
 	void roleMove();
 	void evalution();
 
-	bool atLeft();
-	bool atRight();
-	bool atRail();
-	bool atJumping();
+	int atLeft();
+	int atRight();
+	int atRail();
+	int atJumping();
 	void checkTrafficCone(int index);
 	void checkBeer(int index);
 	void checkBarrier(int index);

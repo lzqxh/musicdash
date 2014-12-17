@@ -34,31 +34,38 @@ void ScoreLayer::onExit() {
 
 void ScoreLayer::displayCombos(EventCustom *event) {
 	int score = * static_cast<int*>(event->getUserData());
+	if (label) { removeChild(label); label = nullptr; }
+	label = CCNode::create();
+	LabelBMFont *l1 = nullptr, *l2 = nullptr, *l3 = nullptr;
+//	auto l1 = LabelBMFont::create("C", "fonts/number_1.fnt");
+//	l1->setScale(0.5f);
+//	l1->setPosition(-100, 200);
+//	lable->addChild(l1);
+
 	std::string text1;
-	std::string text2;
-	if (score == -1) text1 = "MISS";
+	if (score == -1) text1 = "M";
 	else {
-		text1 = score == 2 ? "PREFECT" : "GOOD";
-		text2 = "Combos " + std::to_string(DataVo::inst()->combos);
+		text1 = score == 2 ? "P" : "G";
 	}
-	if (label1) { removeChild(label1); label1 = nullptr; }
-	if (label2) { removeChild(label2); label2 = nullptr; }
-	label1 = LabelTTF::create(text1, "fonts/Marker Felt.ttf", 35);
-	label1->setPosition(_center.x, _center.y + 150);
-	this->addChild(label1);
+	l2 = LabelBMFont::create(text1, "fonts/number_1.fnt");
+	l2->setPosition(0, 100);
+	label->addChild(l2);
+
+	if (score != -1) {
+		auto l3 = LabelBMFont::create(std::to_string(DataVo::inst()->combos), "fonts/number_1.fnt", 35);
+		l3->setScale(0.7f);
+		l3->setPosition(0, -50);
+		label->addChild(l3);
+	}
+
+	label->setPosition(_center.x, _center.y + 250);
+	this->addChild(label);
 	auto scale = CCScaleTo::create(0.2f, 1.3f);
 	auto delay = DelayTime::create(0.2f);
 	auto remove = CallFunc::create([this](){
-		if (label1) { removeChild(label1); label1 = nullptr; }
-		if (label2) { removeChild(label2); label2 = nullptr; }
+		if (label) { removeChild(label); label = nullptr; }
 	});
-	if (text2 != "") {
-		label2 = LabelTTF::create(text2, "fonts/Marker Felt.ttf", 27);
-		label2->setPosition(_center.x, _center.y + 100);
-		this->addChild(label2);
-		label2->runAction(scale->clone());
-	}
-	label1->runAction(Sequence::create(scale, delay, remove, nullptr));
+	label->runAction(Sequence::create(scale, delay, remove, nullptr));
 }
 
 void ScoreLayer::displayScore(EventCustom *event) {
