@@ -15,11 +15,11 @@ bool GameWorld::init() {
 	scoreLayer = ScoreLayer::create();
 	this->addChild(scoreLayer);
 
-	uiLayer = UiLayer::create();
-	this->addChild(uiLayer);
-
 	auto controlCenter = ControlCenter::create();
 	addChild(controlCenter);
+
+	uiLayer = UiLayer::create();
+	this->addChild(uiLayer);
 
 	return true;
 }
