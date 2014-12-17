@@ -149,6 +149,8 @@ void ControlCenter::evalution() {
 }
 
 void ControlCenter::gameStart(EventCustom* e = nullptr) {
+	for (curTime = -300; curTime < 0; curTime++)
+		_eventDispatcher->dispatchCustomEvent(Message::next_timeslice, nullptr);
 	auto cache = SpriteFrameCache::getInstance();
 	auto sprite = Sprite::create();
 	sprite->setPosition(ccp(_center.x, _center.y + 150));
@@ -171,7 +173,6 @@ void ControlCenter::gameStart(EventCustom* e = nullptr) {
 		DelayTime::create(0.3f),
 		CCCallFunc::create([sprite, this](){
 			this->removeChild(sprite);;
-			curTime = 0;
 			_accTime = 0;
 			DataVo::inst()->combos = 0;
 			DataVo::inst()->score = 0;
