@@ -3,28 +3,29 @@
 #include "consts/ResolutionConst.h"
 #include "DataManager/DataVo.h"
 
-int ScoreLayer::score = 0;
 
 bool ScoreLayer::init() {
 	if (!Layer::init()) return false;
-//	label = LabelBMFont::create("!\"#$%&'()*+,", "numbers/score-export.fnt");
-	//addChild(label);
-	//label->setPosition(designWidth/2, designHeight/2);
-	scoreBox = Sprite::create("mainscence/scoreBox.png");
-	addChild(scoreBox);
-	scoreBox->setPosition(designWidth - 110, designHeight - 50);
-	scoreBox->setScale(0.5);
-
 	return true;
 }
 
 void ScoreLayer::onEnter() {
 	Layer::onEnter();
 	auto l1 = EventListenerCustom::create(Message::score,
-		CC_CALLBACK_1(ScoreLayer::displayScore, this));
+		[this](EventCustom *event){
+			int ds = *static_cast<int *>(event->getUserData());
+			float c;
+			if (ds == 1)
+				c = 0.9;
+			else if (ds == 2)
+				c = 1;
+			else 
+				c = 0;
+			DataVo::inst()->score += (1000 + 10 * DataVo::inst()->combos) * c;
+	});
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(l1, this);
 	auto l2 = EventListenerCustom::create(Message::score,
 		CC_CALLBACK_1(ScoreLayer::displayCombos, this));
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(l1, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(l2, this);
 }
 
@@ -66,43 +67,4 @@ void ScoreLayer::displayCombos(EventCustom *event) {
 		if (label) { removeChild(label); label = nullptr; }
 	});
 	label->runAction(Sequence::create(scale, delay, remove, nullptr));
-}
-
-void ScoreLayer::displayScore(EventCustom *event) {
-	int ds = *static_cast<int *>(event->getUserData());
-	int &score = DataVo::inst()->score;
-	if (score < 0)
-		score = 0;
-	score += ds;
-	int n = score;
-	for (auto sprite : scoreSprite)
-		removeChild(sprite);
-	scoreSprite.clear();
-
-	auto cache = SpriteFrameCache::getInstance();
-	if (n <= 0) {
-		auto sprite = Sprite::create();
-		sprite->setDisplayFrame(cache->getSpriteFrameByName("score_0.png"));
-		scoreSprite.push_back(sprite);
-	}
-	else {
-		while(n > 0) {
-			int m = n % 10;
-			n /= 10;
-			auto sprite = Sprite::create();
-			char name[20];
-			sprintf(name, "score_%d.png", m);
-			sprite->setDisplayFrame(cache->getSpriteFrameByName(name));
-			scoreSprite.push_back(sprite);
-		}
-	}
-	float offsetX = 0;
-	float offsetY = 50;
-	for (auto sprite : scoreSprite) {
-		sprite->setScale(0.3);
-		auto width =  sprite->getSpriteFrame()->getOriginalSize().width;
-		offsetX += sprite->getScale() * width;
-		sprite->setPosition(designWidth-offsetX, designHeight-offsetY);
-		addChild(sprite);
-	}
 }

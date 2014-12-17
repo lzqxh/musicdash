@@ -172,6 +172,8 @@ void ControlCenter::evalution() {
 
 void ControlCenter::gameStart(EventCustom* e = nullptr) {
 	roleStatus = Sliding_M;
+	DataVo::inst()->combos = 0;
+	DataVo::inst()->score = 0;
 	for (curTime = -300; curTime < 0; curTime++)
 		_eventDispatcher->dispatchCustomEvent(Message::next_timeslice, nullptr);
 	auto cache = SpriteFrameCache::getInstance();
@@ -197,8 +199,6 @@ void ControlCenter::gameStart(EventCustom* e = nullptr) {
 		CCCallFunc::create([sprite, this](){
 			this->removeChild(sprite);;
 			_accTime = 0;
-			DataVo::inst()->combos = 0;
-			DataVo::inst()->score = 0;
 			while (!inputQue.empty()) inputQue.pop();
 			CocosDenshion::SimpleAudioEngine::getInstance()->
 				playBackgroundMusic(DataVo::inst()->musicFile.c_str());

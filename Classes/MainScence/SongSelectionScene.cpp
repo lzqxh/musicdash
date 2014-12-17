@@ -48,6 +48,7 @@ bool SongSelectionScene::init() {
 	addChild(fg);
 	auto backButton = MenuItemImage::create("mainscence/home.png", "mainscence/home.png",
 		[this](Ref *){Director::getInstance()->popScene();});
+	backButton->setScale(0.8);
 	menu = Menu::create(backButton, nullptr);
 	menu->setPosition(designWidth - 100, designHeight - 100);
 	fg->addChild(menu, 1000);

@@ -25,5 +25,8 @@ public:
 	void update(float dt) override;
 	void energyUp(EventCustom *);
 
+	Sprite *scoreBox;
+	LabelBMFont *score;
+	void displayScore(EventCustom*);
 };
 #endif //__UI_LAYER_H__
