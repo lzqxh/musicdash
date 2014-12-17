@@ -13,8 +13,7 @@ USING_NS_CC;
 class ScoreLayer : public Layer {
 private:
 	std::vector <Sprite *> scoreSprite;
-	LabelTTF *label1, *label2;
-	LabelBMFont *label;
+	CCNode *label;
 public:
 	static int score;
 	Sprite *scoreBox;

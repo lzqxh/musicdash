@@ -63,10 +63,6 @@ void MusicLayer::onExit() {
 
 void MusicLayer::run(EventCustom* event) {
 	addBuilding();
-	std::vector<std::vector<int> > &data = DataVo::inst()->data;
-	if (DataVo::inst()->data[curTime][8] == 1) {
-		CCLog("%d\n", curTime);
-	}
 	objects[0]->removeAllChildren();
 	auto cache = SpriteFrameCache::getInstance();
 	for (int i = 1; i < objects.size(); i++) {
@@ -99,7 +95,7 @@ void MusicLayer::run(EventCustom* event) {
 		}
 	}
 	int index = curTime + 135;
-	if (index >= DataVo::inst()->musicLength) return;
+	if (index >= DataVo::inst()->musicLength || index < 0) return;
 	addTrafficCone(index);
 	addBeer(index);
 	addBarrier(index);

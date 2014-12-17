@@ -20,7 +20,6 @@ bool ControlCenter::init() {
 	auto inputCenter= InputCenter::create();
 	addChild(inputCenter);
 
-	roleStatus = Sliding_M;
 
 	return true;
 }
@@ -79,33 +78,56 @@ void ControlCenter::staticScore(int score) {
 	}
 }
 
-bool ControlCenter::atLeft() {
-	return (roleStatus == Sliding_L || roleStatus == Action_M2L || roleStatus == Action_L2M);
+int ControlCenter::atLeft() {
+	switch (roleStatus)
+	{
+	case Action_M2L: 
+		return 2;
+	case Action_L2M:
+	case Sliding_L: 
+		return 1;
+	default:
+		return -1;
+	}
 }
-bool ControlCenter::atRight() {
-	return (roleStatus == Sliding_R || roleStatus == Action_M2R || roleStatus == Action_L2M);
+int ControlCenter::atRight() {
+	switch (roleStatus)
+	{
+	case Action_M2R: 
+		return 2;
+	case Action_R2M:
+	case Sliding_R: 
+		return 1;
+	default:
+		return -1;
+	}
 }
-bool ControlCenter::atRail() {
+int ControlCenter::atRail() {
 	return (roleStatus == Sliding_UL || roleStatus == Action_M2UL || roleStatus == Action_UL2M ||
 		    roleStatus == Sliding_UR || roleStatus == Action_M2UR || roleStatus == Action_UR2M);
 }
-bool ControlCenter::atJumping() {
-	return roleStatus == Action_JUMP;
+
+int ControlCenter::atJumping() {
+	if (roleStatus == Action_JUMP) {
+		if (DataVo::inst()->actionCount < 15) return 1;
+		else return 2;
+	}
+	return -1;
 }
 
 void ControlCenter::checkTrafficCone(int index) {
 	auto &data = DataVo::inst()->data[index];
 	int score = 0;
-	if (data[0] == 1) score = atRight() ? 1 : -1;
-	if (data[1] == 1) score = atLeft() ? 1 : -1;
+	if (data[0] == 1) score = atRight();
+	if (data[1] == 1) score = atLeft();
 	staticScore(score);
 }
 
 void ControlCenter::checkBeer(int index) {
 	auto &data = DataVo::inst()->data[index];
 	int score = 0;
-	if (data[2] == 1) score = atLeft() ? 1 : -1;
-	if (data[3] == 1) score = atRight() ? 1 : -1;
+	if (data[2] == 1) score = atLeft();
+	if (data[3] == 1) score = atRight();
 	if (score == 1) {
 //		_eventDispatcher->dispatchCustomEvent(Message::disp_effect, nullptr);
 		_eventDispatcher->dispatchCustomEvent(Message::explode, &index);
@@ -116,23 +138,23 @@ void ControlCenter::checkBeer(int index) {
 void ControlCenter::checkBarrier(int index) {
 	auto &data = DataVo::inst()->data[index];
 	int numbers = 200 / TIMESLICE_SIZE, score = 0;
-	if (data[4] % numbers == 1) score = atRight() ? 1 : -1;
-	if (data[5] % numbers == 1) score = atLeft() ? 1 : -1;
+	if (data[4] % numbers == 1) score = atRight();
+	if (data[5] % numbers == 1) score = atLeft();
 	staticScore(score);
 }
 
 void ControlCenter::checkRailing(int index) {
 	auto &data = DataVo::inst()->data[index];
 	int numbers = 200 / TIMESLICE_SIZE, score = 0;
-	if (data[6] % numbers == 1) score = atRail() ? 1 : -1;
-	if (data[7] % numbers == 1) score = atRail() ? 1 : -1;
+	if (data[6] % numbers == 1) score = atRail();
+	if (data[7] % numbers == 1) score = atRail();
 	staticScore(score);
 }
 
 void ControlCenter::checkManholeCover(int index) {
 	auto &data = DataVo::inst()->data[index];
 	int score = 0;
-	if (data[8]  == 1) score = atJumping() ? 1 : -1;
+	if (data[8]  == 1) score = atJumping();
 	staticScore(score);
 }
 
@@ -149,6 +171,9 @@ void ControlCenter::evalution() {
 }
 
 void ControlCenter::gameStart(EventCustom* e = nullptr) {
+	roleStatus = Sliding_M;
+	for (curTime = -300; curTime < 0; curTime++)
+		_eventDispatcher->dispatchCustomEvent(Message::next_timeslice, nullptr);
 	auto cache = SpriteFrameCache::getInstance();
 	auto sprite = Sprite::create();
 	sprite->setPosition(ccp(_center.x, _center.y + 150));
@@ -171,7 +196,6 @@ void ControlCenter::gameStart(EventCustom* e = nullptr) {
 		DelayTime::create(0.3f),
 		CCCallFunc::create([sprite, this](){
 			this->removeChild(sprite);;
-			curTime = 0;
 			_accTime = 0;
 			DataVo::inst()->combos = 0;
 			DataVo::inst()->score = 0;
