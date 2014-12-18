@@ -1,4 +1,6 @@
 #include "UiLayer.h"
+#include "mainscence/SongSelectionScene.h"
+#include "mainscence/LoginScene.h"
 #include "consts\ResolutionConst.h"
 #include "consts\Message.h"
 #include "DataManager/DataVo.h"
@@ -30,15 +32,15 @@ bool UiLayer::init() {
 	energy = Sprite::create();
 	addChild(energy);
 	energy->setAnchorPoint(Point(0, 0));
-	energy->setPosition(designWidth - 100, designHeight - 300);
+	energy->setPosition(designWidth - 100, designHeight - 370);
 	energy->setScale(0.4);
 	energy->setDisplayFrame(cache->getSpriteFrameByName("energy_0.png"));
-	energyValue = 0;
 
-	scoreBox = Sprite::create("mainscence/scoreBox.png");
+	scoreBox = Sprite::create("mainscence/scoreBox2.png");
 	addChild(scoreBox);
 	scoreBox->setAnchorPoint(Point(1.0f,1.0f));
 	scoreBox->setPosition(designWidth - 10, designHeight - 10);
+	score = distance = nullptr;
 
 	scheduleUpdate();
 	
@@ -48,7 +50,8 @@ bool UiLayer::init() {
 void UiLayer::onEnter() {
 	Layer::onEnter();
 	_eventDispatcher->addCustomEventListener(Message::get_beer, CC_CALLBACK_1(UiLayer::energyUp, this));
-	_eventDispatcher->addCustomEventListener(Message::score, CC_CALLBACK_1(UiLayer::displayScore, this));
+	_eventDispatcher->addCustomEventListener(Message::disp_score, CC_CALLBACK_1(UiLayer::displayScore, this));
+	_eventDispatcher->addCustomEventListener(Message::game_stop, CC_CALLBACK_1(UiLayer::showGameoverBox, this));
 	displayScore(nullptr);
 
 	auto listener = EventListenerTouchOneByOne::create();
@@ -59,9 +62,9 @@ void UiLayer::onEnter() {
 			energy->getDisplayFrame()->getOriginalSize().width * energy->getScale(),
 			energy->getDisplayFrame()->getOriginalSize().height * energy->getScale());
 
-		if ( this->energyValue == 10 
+		if ( DataVo::inst()->energyValue == 10 
 			&& rect.containsPoint(location)) {
-			energyValue = 0;
+			DataVo::inst()->energyValue = 0;
 			energy->setDisplayFrame(
 				SpriteFrameCache::getInstance()->getSpriteFrameByName("energy_0.png"));
 		}
@@ -72,6 +75,7 @@ void UiLayer::onEnter() {
 
 void UiLayer::onExit() {
 	_eventDispatcher->removeEventListenersForTarget(this, true);
+	_eventDispatcher->removeCustomEventListeners(Message::get_beer);
 	Layer::onExit();
 }
 
@@ -80,6 +84,8 @@ void UiLayer::showControlMenu(Ref *pSender) {
 	CocosDenshion::SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
 
 	auto restart = MenuItemImage::create("mainscence/restart.png", "mainscence/restart.png", [this](Ref *) {
+		CocosDenshion::SimpleAudioEngine::getInstance()->
+			playEffect("soundeffect/button.wav");
 		this->removeChild(controlMenu);
 		_eventDispatcher->dispatchCustomEvent(Message::game_restart, nullptr);
 		pauseButton->setVisible(true);
@@ -87,13 +93,19 @@ void UiLayer::showControlMenu(Ref *pSender) {
 		pauseButton->runAction(ScaleTo::create(0.5f, 0.6));
 	});
 	auto stop = MenuItemImage::create("mainscence/home.png", "mainscence/home.png", [this](Ref *) {
-		this->removeChild(controlMenu);
-		_eventDispatcher->dispatchCustomEvent(Message::game_stop, nullptr);
-		pauseButton->setVisible(true);
-		pauseButton->setPosition(50, 50);
-		pauseButton->setScale(0.6);
+		CocosDenshion::SimpleAudioEngine::getInstance()->
+			playEffect("soundeffect/button.wav");
+//		this->removeChild(controlMenu);
+//		_eventDispatcher->dispatchCustomEvent(Message::game_stop, nullptr);
+//		pauseButton->setVisible(true);
+//		pauseButton->setPosition(50, 50);
+//		pauseButton->setScale(0.6);
+		auto scene = LoginScene::create();
+		Director::getInstance()->replaceScene(scene);
 	});
 	auto cancel = MenuItemImage::create("mainscence/start.png", "mainscence/start.png", [this](Ref *) {
+		CocosDenshion::SimpleAudioEngine::getInstance()->
+			playEffect("soundeffect/button.wav");
 		this->removeChild(controlMenu);
 		CocosDenshion::SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
 		_eventDispatcher->dispatchCustomEvent(Message::game_resume, nullptr);
@@ -142,6 +154,7 @@ void UiLayer::update(float dt) {
 
 void UiLayer::energyUp(EventCustom *event) {
 	auto cache = SpriteFrameCache::getInstance();
+	int &energyValue = DataVo::inst()->energyValue;
 	energyValue = energyValue >= 10 ? 10 : energyValue + 1;
 	char name[20];
 	sprintf(name, "energy_%d.png", energyValue);
@@ -149,14 +162,85 @@ void UiLayer::energyUp(EventCustom *event) {
 }
 
 void UiLayer::displayScore(EventCustom *event) {
-	if (score)
-		scoreBox->removeChild(score, true);
+	if (score) scoreBox->removeChild(score, true);
 
 	score = LabelBMFont::create(std::to_string(DataVo::inst()->score),
 		"fonts/number_2.fnt");
 	scoreBox->addChild(score);
 	score->setAnchorPoint(Point(1, 0.5f));
-	auto x = scoreBox->getTextureRect().getMaxX() * scoreBox->getScale() - 10;
-	auto y = scoreBox->getTextureRect().getMaxY() * scoreBox->getScale() / 2;
+	float x = scoreBox->getTextureRect().getMaxX() * scoreBox->getScale() - 45;
+	float y = scoreBox->getTextureRect().getMaxY() * scoreBox->getScale() / 4  - 2;
 	score->setPosition(x, y);
+
+	if (distance) scoreBox->removeChild(distance, true);
+
+	distance = LabelBMFont::create(std::to_string(DataVo::inst()->distance),
+		"fonts/number_2.fnt");
+	scoreBox->addChild(distance);
+	distance->setAnchorPoint(Point(1, 0.5f));
+	x = scoreBox->getTextureRect().getMaxX() * scoreBox->getScale() - 45;
+	y = scoreBox->getTextureRect().getMaxY() * scoreBox->getScale() * 3 / 4 - 3;
+	distance->setPosition(x, y);
 }
+
+void UiLayer::showGameoverBox(EventCustom *event) {
+	CocosDenshion::SimpleAudioEngine::getInstance()->
+		playBackgroundMusic("soundeffect/gameover.mp3");
+	auto bg = Sprite::create("mainscence/gameoverbox.png");
+	bg->setPosition(ccp(_center.x, _center.y + 100));
+	bg->setAnchorPoint(ccp(0.5, 0.5));
+	bg->setScale(PNG_SCALE);
+
+	int n = DataVo::inst()->score;
+	auto scoreLabel = LabelBMFont::create(std::to_string(n), "fonts/number_2.fnt");
+	scoreLabel->setAnchorPoint(ccp(1.0, 0.5));
+	scoreLabel->setPosition(1200, 1500);
+	scoreLabel->setScale(1.0/PNG_SCALE);
+	bg->addChild(scoreLabel, 10);
+
+	n = DataVo::inst()->distance;
+	auto distanceLabel = LabelBMFont::create(std::to_string(n), "fonts/number_2.fnt");
+	distanceLabel->setAnchorPoint(ccp(1.0, 0.5));
+	distanceLabel->setPosition(1200, 1650);
+	distanceLabel->setScale(1.0/PNG_SCALE);
+	bg->addChild(distanceLabel, 10);
+
+	auto button1 = MenuItemImage::create("mainscence/home.png", "mainscence/home.png");
+	button1->setPosition(ccp(_center.x - 270, _center.y + 150));
+
+	auto button2 = MenuItemImage::create("mainscence/restart.png", "mainscence/restart.png");
+	button2->setPosition(ccp(_center.x, _center.y + 150));
+
+	auto button3 = MenuItemImage::create("mainscence/start.png", "mainscence/start.png");
+	button3->setPosition(ccp(_center.x + 270, _center.y + 150));
+
+	auto menu = Menu::create(button1, button2, button3, nullptr);
+	menu->setAnchorPoint(ccp(0, 0));
+	menu->setPosition(ccp(550, 630));
+	bg->addChild(menu);
+
+	this->addChild(bg, 1000);
+	button1->setCallback([this, bg, menu](Ref *){
+		CocosDenshion::SimpleAudioEngine::getInstance()->
+			playEffect("soundeffect/button.wav");
+		auto scene = LoginScene::create();
+		Director::getInstance()->replaceScene(scene);
+	});
+
+	button2->setCallback([&](Ref *){
+		this->removeChild(bg);
+		this->_eventDispatcher->dispatchCustomEvent(Message::game_restart, nullptr);
+		CocosDenshion::SimpleAudioEngine::getInstance()->
+			playEffect("soundeffect/button.wav");
+	});
+
+	button3->setCallback([&](Ref *){
+		CocosDenshion::SimpleAudioEngine::getInstance()->
+			playEffect("soundeffect/button.wav");
+		auto scene = SongSelectionScene::create();
+		Director::getInstance()->replaceScene(scene);
+	});
+
+	return;
+}
+

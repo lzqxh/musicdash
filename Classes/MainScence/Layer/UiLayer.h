@@ -17,7 +17,6 @@ public:
 	Sprite *progress;
 	Sprite *head;
 	Sprite *energy;
-	int energyValue;
 
 	virtual void onEnter();
 	virtual void onExit();
@@ -26,7 +25,9 @@ public:
 	void energyUp(EventCustom *);
 
 	Sprite *scoreBox;
-	LabelBMFont *score;
+	LabelBMFont *score, *distance;
 	void displayScore(EventCustom*);
+
+	void showGameoverBox(EventCustom*);
 };
 #endif //__UI_LAYER_H__

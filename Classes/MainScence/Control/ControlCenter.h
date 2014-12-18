@@ -34,6 +34,8 @@ private:
 	void checkManholeCover(int index);
 	void staticScore(int);
 
+	void staticDis();
+
 public:
 	void receiveInput(EventCustom*);
 	GameStatus gameStatus;

@@ -70,12 +70,25 @@ void ControlCenter::onExit() {
 
 void ControlCenter::staticScore(int score) {
 	if (score != 0) {
-		if (score == -1)
+		if (score == -1) {
 			DataVo::inst()->combos = 0;
-		else 
+			DataVo::inst()->speedX = 0;
+		}
+		else {
 			DataVo::inst()->combos++;
+			DataVo::inst()->speedX = 10;
+		}
 		_eventDispatcher->dispatchCustomEvent(Message::score, &score);
+		_eventDispatcher->dispatchCustomEvent(Message::disp_score, nullptr);
 	}
+}
+
+void ControlCenter::staticDis() {
+	static float accdis = 0;
+	accdis += (DataVo::inst()->speed + DataVo::inst()->speedX) * 1.0 * TIMESLICE_SIZE / 1000 * 15;
+	DataVo::inst()->distance += (int)accdis;
+	accdis -= (int)accdis;
+	_eventDispatcher->dispatchCustomEvent(Message::disp_score, nullptr);
 }
 
 int ControlCenter::atLeft() {
@@ -128,7 +141,7 @@ void ControlCenter::checkBeer(int index) {
 	int score = 0;
 	if (data[2] == 1) score = atLeft();
 	if (data[3] == 1) score = atRight();
-	if (score) {
+	if (score > 0) {
 //		_eventDispatcher->dispatchCustomEvent(Message::disp_effect, nullptr);
 		_eventDispatcher->dispatchCustomEvent(Message::explode, &index);
 		_eventDispatcher->dispatchCustomEvent(Message::get_beer, &index);
@@ -171,9 +184,17 @@ void ControlCenter::evalution() {
 }
 
 void ControlCenter::gameStart(EventCustom* e = nullptr) {
+	CocosDenshion::SimpleAudioEngine::getInstance()->
+		stopBackgroundMusic();
 	roleStatus = Sliding_M;
 	DataVo::inst()->combos = 0;
 	DataVo::inst()->score = 0;
+	DataVo::inst()->distance = 0;
+	DataVo::inst()->energyValue = -1;
+	DataVo::inst()->speed = 50;
+	DataVo::inst()->speedX = 0;
+	_eventDispatcher->dispatchCustomEvent(Message::get_beer);
+	_eventDispatcher->dispatchCustomEvent(Message::disp_score);
 	for (curTime = -300; curTime < 0; curTime++)
 		_eventDispatcher->dispatchCustomEvent(Message::next_timeslice, nullptr);
 	auto cache = SpriteFrameCache::getInstance();
@@ -205,56 +226,12 @@ void ControlCenter::gameStart(EventCustom* e = nullptr) {
 			gameStatus = gs_playing;
 		}),
 		nullptr
-		);
+	);
 	sprite->runAction(action);
 }
 
 void ControlCenter::gameOver(EventCustom* event = nullptr) {
 	gameStatus = gs_over;
-	CocosDenshion::SimpleAudioEngine::getInstance()->
-		stopBackgroundMusic();
-	CocosDenshion::SimpleAudioEngine::getInstance()->
-		playBackgroundMusic("loginscence/bg.mp3", true);
-	auto cache = SpriteFrameCache::getInstance();
-	auto bg = Sprite::create();
-	bg->setDisplayFrame(cache->getSpriteFrameByName("gameover_bg.png"));
-	bg->setPosition(ccp(_center.x, _center.y + 100));
-	bg->setAnchorPoint(ccp(0.5, 0.5));
-	bg->setScale(2.7f);
-
-	int n = DataVo::inst()->score;
-	auto scoreLabel = LabelTTF::create(std::to_string(n), "fonts/Marker Felt.ttf", 27);
-	scoreLabel->setAnchorPoint(ccp(1.0, 0.5));
-	scoreLabel->setPosition(215, 223);
-	bg->addChild(scoreLabel, 10);
-
-	auto button1 = MenuItemImage::create();
-	button1->setNormalSpriteFrame(cache->getSpriteFrameByName("gameover_restart_1.png"));
-	button1->setSelectedSpriteFrame(cache->getSpriteFrameByName("gameover_restart_2.png"));
-	button1->setScale(2.7f);
-	button1->setPosition(ccp(-170, 0));
-
-	auto button2 = MenuItemImage::create();
-	button2->setNormalSpriteFrame(cache->getSpriteFrameByName("gameover_back_1.png"));
-	button2->setSelectedSpriteFrame(cache->getSpriteFrameByName("gameover_back_2.png"));
-	button2->setScale(2.7f);
-	button2->setPosition(ccp(0, 0));
-
-	auto menu = Menu::create(button1, button2, nullptr);
-	menu->setPosition(_center.x, 135);
-	this->addChild(bg);
-	this->addChild(menu);
-
-	button1->setCallback([this, bg, menu](Ref *){
-		this->removeChild(bg);
-		this->removeChild(menu);
-		this->_eventDispatcher->dispatchCustomEvent(Message::game_restart, nullptr);
-	});
-	button2->setCallback([&](Ref *){
-		auto scene = SongSelectionScene::create();
-		Director::getInstance()->replaceScene(scene);
-	});
-	return;
 }
 
 void ControlCenter::gamePause(EventCustom* event = nullptr) {
@@ -372,7 +349,7 @@ void ControlCenter::roleMove() {
 	if (lastInput == "" && !inputQue.empty()) {
 		if (inputQue.front().second != Message::input_touch_release)
 			CocosDenshion::SimpleAudioEngine::getInstance()->
-				playEffect("input.wav");
+				playEffect("soundeffect/input.wav");
 		inputQue.pop();
 	}
 }
@@ -382,12 +359,14 @@ void ControlCenter::fixedUpdate(float dt) {
 	while ((curTime + 1) * TIMESLICE_SIZE < _accTime) {
 		curTime ++;
 		if (curTime >= DataVo::inst()->musicLength) {
-			gameOver();
+			_eventDispatcher->dispatchCustomEvent(Message::game_stop, nullptr);
 			break;
 		}
 		roleMove();
 		evalution();
 		_eventDispatcher->dispatchCustomEvent(Message::next_timeslice, nullptr);
+		if (curTime % 15 == 0) 
+			staticDis();
 	}
 }
 

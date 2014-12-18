@@ -45,7 +45,9 @@ public:
 	RoleStatus _roleStatus;
 	int actionCount;
 	int combos;
-	int score;
+	int energyValue;
+	int score, distance;
+	int speed, speedX;
 	int _curTime;
 
 	//ÓÎÏ·ËÙ¶È

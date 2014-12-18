@@ -17,7 +17,7 @@ private:
 	Layer *bg;
 	Layer *fg;
 	Menu *menu;
-	std::vector<std::pair<Sprite *, LabelTTF*> > songs;
+	std::vector<std::pair<Sprite *, Sprite*> > songs;
 	Point beginPoint;
 	int focus;
 };

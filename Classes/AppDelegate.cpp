@@ -25,14 +25,18 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	glview->setDesignResolutionSize(designWidth, designHeight, ResolutionPolicy::FIXED_WIDTH);
 
     // turn on display FPS
-    director->setDisplayStats(true);
+    //director->setDisplayStats(true);
 
     // set FPS. the default value is 1.0/60 if you don't call this
     director->setAnimationInterval(1.0 / 60);
 
     // create a scene. it's an autorelease object
+
+	auto cache = SpriteFrameCache::getInstance();
+	cache->addSpriteFramesWithFile("fonts/hanzi.plist");
+
     auto scene = LoginScene::create();
-    //auto scene = GameWorld::create();
+//    auto scene = GameWorld::create();
 
     // run
     director->runWithScene(scene);

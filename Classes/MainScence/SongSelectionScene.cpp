@@ -53,22 +53,25 @@ bool SongSelectionScene::init() {
 	menu->setPosition(designWidth - 100, designHeight - 100);
 	fg->addChild(menu, 1000);
 
-	auto title = LabelTTF::create("选择音乐", "fonts/Marker Felt.ttf", 70);
-	title->setColor(Color3B::BLACK);
+//	auto title = LabelTTF::create("选择音乐", "fonts/Marker Felt.ttf", 70);
+//	title->setColor(Color3B::BLACK);
+	auto title = Sprite::create();
+	title->setSpriteFrame("xuanzeyinyue.png");
 	title->setAnchorPoint(Point(0, 1));
-	title->setPosition(50, designHeight-50);
+	title->setScale(0.7f);
+	title->setPosition(30, designHeight-50);
 	fg->addChild(title);
 
 	//just for test;
 	auto song1 = Sprite::create("songs/test.png");
 	auto song2 = Sprite::create("songs/song2.png");
 	auto song3 = Sprite::create("songs/song3.png");
-	auto songName1 = LabelTTF::create("老子明天不上谢帝", "fonts/Marker Felt.ttf", 25);
-	auto songName2 = LabelTTF::create("老子明天不上谢帝", "fonts/Marker Felt.ttf", 25);
-	auto songName3 = LabelTTF::create("老子明天不上谢帝", "fonts/Marker Felt.ttf", 25);
-	songName1->setColor(Color3B::BLACK);
-	songName2->setColor(Color3B::BLACK);
-	songName3->setColor(Color3B::BLACK);
+	auto songName1 = Sprite::create("songs/testname.png");
+	songName1->setScale(0.5f);
+	auto songName2 = Sprite::create("songs/testname.png");
+	songName2->setScale(0.5f);
+	auto songName3 = Sprite::create("songs/testname.png");
+	songName3->setScale(0.5f);
 
 	songs.push_back(std::make_pair(song1, songName1));
 	songs.push_back(std::make_pair(song2, songName2));
@@ -78,11 +81,11 @@ bool SongSelectionScene::init() {
 
 	for (int i = 0; i < songs.size(); i++) {
 		fg->addChild(songs[i].first);
-		fg->addChild(songs[i].second);
+//		fg->addChild(songs[i].second);
 		songs[i].first->setAnchorPoint(Point(0.5, 0));
-		songs[i].second->setAnchorPoint(Point(0.5, 0));
-		songs[i].first->setPosition(designWidth/2 + 460*i, designHeight/2 - 150 );
-		songs[i].second->setPosition(designWidth/2 + 460*i, designHeight/2 - 175);
+//		songs[i].second->setAnchorPoint(Point(0.5, 0));
+		songs[i].first->setPosition(designWidth/2 + 460*i, designHeight/2 - 100 );
+//		songs[i].second->setPosition(designWidth/2 + 460*i, designHeight/2 - 175);
 	}
 
 	auto touchListener = EventListenerTouchOneByOne::create();
@@ -95,6 +98,8 @@ bool SongSelectionScene::init() {
 
 void SongSelectionScene::onEnter() {
 	Scene::onEnter();
+	CocosDenshion::SimpleAudioEngine::getInstance()->
+		playBackgroundMusic("soundeffect/bg.mp3", true);
 }
 
 bool SongSelectionScene::onTouchBegan( Touch * touch, Event *event) {
@@ -105,7 +110,7 @@ void SongSelectionScene::onTouchEnded( Touch * touch, Event *event) {
 	auto endPoint = touch->getLocation();
 	int distance = 10;
 	float actionTime = 0.2;
-	if(endPoint.x - beginPoint.x > distance) { //向右划
+	if(endPoint.x - beginPoint.x > distance) { //向右�?
 		if(focus > 0) {
 			for (auto song : songs) {
 				auto move = MoveBy::create(actionTime, Vec2(460, 0));
@@ -114,7 +119,7 @@ void SongSelectionScene::onTouchEnded( Touch * touch, Event *event) {
 			focus--;
 		}
 	}
-	else if(endPoint.x - beginPoint.x < -distance) { //向左划
+	else if(endPoint.x - beginPoint.x < -distance) { //向左�?
 		if(focus < songs.size() - 1) {
 			for (auto song : songs) {
 				auto move = MoveBy::create(actionTime, Vec2(-460, 0));

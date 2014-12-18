@@ -15,8 +15,6 @@ bool LoginScene::init() {
 	mainMenu->setContentSize(startButton->getContentSize());
 	layer->addChild(mainMenu, 1000);
 
-	CocosDenshion::SimpleAudioEngine::getInstance()->
-		playBackgroundMusic("loginscence/bg.mp3", true);
 
 	//开场动画
 	auto loading = Sprite::create("loginscence/loading.png");
@@ -24,8 +22,9 @@ bool LoginScene::init() {
 	auto road = Sprite::create("loginscence/login2.png");
 	auto boss = Sprite::create("loginscence/boss.png");
 	auto xiaoming = Sprite::create("loginscence/xiaoming.png");
-	auto title = LabelTTF::create("跑调音雄", "fonts/Marker Felt.ttf", 70);
-	title->setColor(Color3B::BLACK);
+	auto title = Sprite::create();
+	title->setSpriteFrame("paodiaoyingxiong.png");
+//	title->setColor(Color3B::BLACK);
 	auto building1 = Sprite::create("loginscence/building1.png");
 	auto building2 = Sprite::create("loginscence/building2.png");
 	auto building3 = Sprite::create("loginscence/building3.png");
@@ -67,7 +66,8 @@ bool LoginScene::init() {
 	xiaoming->setAnchorPoint(Point(0, 0));
 	xiaoming->setPosition(designWidth + 20, 30);
 	title->setAnchorPoint(Point(0, 1));
-	title->setPosition(50, designHeight-50);
+	title->setScale(0.7f);
+	title->setPosition(30, designHeight-50);
 	title->setOpacity(0);
 	building1->setScale(0.8);
 	building2->setScale(0.8);
@@ -148,14 +148,14 @@ bool LoginScene::init() {
 }
 
 void LoginScene::onEnter() {
-	Scene::onEnter();
-	auto cache = SpriteFrameCache::getInstance();
+	Scene::onEnter();	auto cache = SpriteFrameCache::getInstance();
+
 	cache->addSpriteFramesWithFile("mainscence/count.plist");
-	cache->addSpriteFramesWithFile("mainscence/gameover.plist");
 	cache->addSpriteFramesWithFile("mainscence/explode.plist");
 	cache->addSpriteFramesWithFile("rolemove/rolemove.plist");
-	cache->addSpriteFramesWithFile("numbers/score.plist");
 	cache->addSpriteFramesWithFile("mainscence/energy.plist");
+	CocosDenshion::SimpleAudioEngine::getInstance()->
+		playBackgroundMusic("soundeffect/bg.mp3", true);
 }
 
 void LoginScene::onStartButtonClicked(Ref *pSender) {

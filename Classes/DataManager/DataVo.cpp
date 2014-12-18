@@ -55,14 +55,15 @@ void DataVo::resolve(unsigned char *pBuffer, int st, int ed) {
 			last = (int)(getFloat(pBuffer, i + 1) * 1000);
 			break;
 		}
-	if (time < 0 || type < 0) return;
+	if (time < 0) return;
+	int index = time / TIMESLICE_SIZE;
+    while (index >= data.size())
+    	data.push_back(std::vector<int>(9, false));
+	if (type < 0) return;
 	if (last < 0) last = 0;
 	if (type == 7) type = 8;
 	else type --;
 
-	int index = time / TIMESLICE_SIZE;
-    while (index >= data.size())
-    	data.push_back(std::vector<int>(9, false));
     data[index][type] = 1;
     while ((index + 1) * TIMESLICE_SIZE <= time + last) {
     	index++;
