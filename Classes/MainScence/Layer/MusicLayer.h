@@ -12,8 +12,10 @@ private:
 	std::vector<Node*> objects;
 	Texture2D* _explosionTexture;
 	void run(EventCustom*);
+	void addNote(EventCustom*);
 	void dispEffect(EventCustom*);
 	void explode(EventCustom*);
+	void explodeAll(EventCustom*);
 
 	void addTrafficCone(int index);
 	void addBeer(int index);

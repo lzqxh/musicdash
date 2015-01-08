@@ -23,6 +23,7 @@ public:
 
 	void update(float dt) override;
 	void energyUp(EventCustom *);
+	void energyExp(EventCustom *);
 
 	Sprite *scoreBox;
 	LabelBMFont *score, *distance;

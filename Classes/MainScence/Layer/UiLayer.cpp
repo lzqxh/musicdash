@@ -40,7 +40,6 @@ bool UiLayer::init() {
 	addChild(scoreBox);
 	scoreBox->setAnchorPoint(Point(1.0f,1.0f));
 	scoreBox->setPosition(designWidth - 10, designHeight - 10);
-	score = distance = nullptr;
 
 	scheduleUpdate();
 	
@@ -49,7 +48,9 @@ bool UiLayer::init() {
 
 void UiLayer::onEnter() {
 	Layer::onEnter();
-	_eventDispatcher->addCustomEventListener(Message::get_beer, CC_CALLBACK_1(UiLayer::energyUp, this));
+	score = distance = nullptr;
+	_eventDispatcher->addCustomEventListener(Message::beer_get, CC_CALLBACK_1(UiLayer::energyUp, this));
+	_eventDispatcher->addCustomEventListener(Message::beer_effect_start, CC_CALLBACK_1(UiLayer::energyExp, this));
 	_eventDispatcher->addCustomEventListener(Message::disp_score, CC_CALLBACK_1(UiLayer::displayScore, this));
 	_eventDispatcher->addCustomEventListener(Message::game_stop, CC_CALLBACK_1(UiLayer::showGameoverBox, this));
 	displayScore(nullptr);
@@ -62,11 +63,8 @@ void UiLayer::onEnter() {
 			energy->getDisplayFrame()->getOriginalSize().width * energy->getScale(),
 			energy->getDisplayFrame()->getOriginalSize().height * energy->getScale());
 
-		if ( DataVo::inst()->energyValue == 10 
-			&& rect.containsPoint(location)) {
-			DataVo::inst()->energyValue = 0;
-			energy->setDisplayFrame(
-				SpriteFrameCache::getInstance()->getSpriteFrameByName("energy_0.png"));
+		if (rect.containsPoint(location)) {
+			this->_eventDispatcher->dispatchCustomEvent(Message::beer_click, this);
 		}
 		return true;
 	};
@@ -75,7 +73,11 @@ void UiLayer::onEnter() {
 
 void UiLayer::onExit() {
 	_eventDispatcher->removeEventListenersForTarget(this, true);
-	_eventDispatcher->removeCustomEventListeners(Message::get_beer);
+	_eventDispatcher->removeCustomEventListeners(Message::beer_get);
+	_eventDispatcher->removeCustomEventListeners(Message::beer_effect_start);
+	_eventDispatcher->removeCustomEventListeners(Message::disp_score);
+	_eventDispatcher->removeCustomEventListeners(Message::game_stop);
+
 	Layer::onExit();
 }
 
@@ -95,7 +97,7 @@ void UiLayer::showControlMenu(Ref *pSender) {
 	auto stop = MenuItemImage::create("mainscence/home.png", "mainscence/home.png", [this](Ref *) {
 		CocosDenshion::SimpleAudioEngine::getInstance()->
 			playEffect("soundeffect/button.wav");
-//		this->removeChild(controlMenu);
+		this->removeChild(controlMenu);
 //		_eventDispatcher->dispatchCustomEvent(Message::game_stop, nullptr);
 //		pauseButton->setVisible(true);
 //		pauseButton->setPosition(50, 50);
@@ -156,6 +158,15 @@ void UiLayer::energyUp(EventCustom *event) {
 	auto cache = SpriteFrameCache::getInstance();
 	int &energyValue = DataVo::inst()->energyValue;
 	energyValue = energyValue >= 10 ? 10 : energyValue + 1;
+	char name[20];
+	sprintf(name, "energy_%d.png", energyValue);
+	energy->setDisplayFrame(cache->getSpriteFrameByName(name));
+}
+
+void UiLayer::energyExp(EventCustom *event) {
+	//Maybe need a action ?!
+	auto cache = SpriteFrameCache::getInstance();
+	int &energyValue = DataVo::inst()->energyValue;
 	char name[20];
 	sprintf(name, "energy_%d.png", energyValue);
 	energy->setDisplayFrame(cache->getSpriteFrameByName(name));
@@ -227,7 +238,7 @@ void UiLayer::showGameoverBox(EventCustom *event) {
 		Director::getInstance()->replaceScene(scene);
 	});
 
-	button2->setCallback([&](Ref *){
+	button2->setCallback([this, bg](Ref *){
 		this->removeChild(bg);
 		this->_eventDispatcher->dispatchCustomEvent(Message::game_restart, nullptr);
 		CocosDenshion::SimpleAudioEngine::getInstance()->

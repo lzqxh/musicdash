@@ -21,6 +21,8 @@ private:
 	std::queue<std::pair<int, std::string> > inputQue;
 	std::string lastInput;
 	void roleMove();
+
+	int evaluateLim;
 	void evalution();
 
 	int atLeft();
@@ -47,12 +49,20 @@ public:
 	virtual void onEnter();
 	virtual void onExit();
 
+	//main loop
 	void fixedUpdate(float);
 
+	//game status control
 	void gameStart(EventCustom*);
 	void gameOver(EventCustom*);
 	void gamePause(EventCustom*);
 	void gameResume(EventCustom*);
+
+
+	//input from uiLayer
+	void clickBeer(EventCustom*);
+	void beerEffectStart();
+	void beerEffectStop();
 };
 
 #endif //__CONTROL_CENTER_H__

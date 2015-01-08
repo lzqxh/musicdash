@@ -5,6 +5,8 @@
 
 namespace Message {
 	const std::string next_timeslice	= "next_timeslice";
+	const std::string next_roleaction   = "next_roleaction";
+	const std::string next_note = "next_note";
 
 	const std::string input_slide_left	= "input_slide_left";
 	const std::string input_slide_right	= "input_slide_right";
@@ -23,7 +25,10 @@ namespace Message {
 	const std::string game_restart = "game_restart";
 	const std::string game_resume = "game_resume";
 
-	const std::string get_beer = "get_beer";
+	const std::string beer_get = "get_beer";
+	const std::string beer_effect_start = "beer_effect_start";
+	const std::string beer_effect_stop = "beer_effect_stop";
+	const std::string beer_click = "beer_click";
 };
 
 

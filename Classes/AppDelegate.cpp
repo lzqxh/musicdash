@@ -35,8 +35,13 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	auto cache = SpriteFrameCache::getInstance();
 	cache->addSpriteFramesWithFile("fonts/hanzi.plist");
 
-    auto scene = LoginScene::create();
+
+	cache->addSpriteFramesWithFile("mainscence/count.plist");
+	cache->addSpriteFramesWithFile("mainscence/explode.plist");
+	cache->addSpriteFramesWithFile("rolemove/rolemove.plist");
+	cache->addSpriteFramesWithFile("mainscence/energy.plist");
 //    auto scene = GameWorld::create();
+    auto scene = LoginScene::create();
 
     // run
     director->runWithScene(scene);

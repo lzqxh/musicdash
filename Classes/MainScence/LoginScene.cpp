@@ -148,12 +148,7 @@ bool LoginScene::init() {
 }
 
 void LoginScene::onEnter() {
-	Scene::onEnter();	auto cache = SpriteFrameCache::getInstance();
-
-	cache->addSpriteFramesWithFile("mainscence/count.plist");
-	cache->addSpriteFramesWithFile("mainscence/explode.plist");
-	cache->addSpriteFramesWithFile("rolemove/rolemove.plist");
-	cache->addSpriteFramesWithFile("mainscence/energy.plist");
+	Scene::onEnter();	
 	CocosDenshion::SimpleAudioEngine::getInstance()->
 		playBackgroundMusic("soundeffect/bg.mp3", true);
 }

@@ -46,6 +46,9 @@ void ControlCenter::onEnter() {
 											 CC_CALLBACK_1(ControlCenter::gameStart, this));
 	_eventDispatcher->addCustomEventListener(Message::game_stop,
 											 CC_CALLBACK_1(ControlCenter::gameOver, this));
+
+	_eventDispatcher->addCustomEventListener(Message::beer_click,
+											 CC_CALLBACK_1(ControlCenter::clickBeer, this));
 	CCLog("on Enter\n");
 	//直接开始～
 	this->_eventDispatcher->dispatchCustomEvent(Message::game_restart, nullptr);
@@ -63,6 +66,8 @@ void ControlCenter::onExit() {
 	_eventDispatcher->removeCustomEventListeners(Message::input_slide_left);
 	_eventDispatcher->removeCustomEventListeners(Message::input_slide_right);
 	_eventDispatcher->removeCustomEventListeners(Message::input_slide_up);
+
+	_eventDispatcher->removeCustomEventListeners(Message::beer_click);
 	this->unschedule(schedule_selector(ControlCenter::fixedUpdate));
 	CCNode::onExit();
 }
@@ -144,7 +149,7 @@ void ControlCenter::checkBeer(int index) {
 	if (score > 0) {
 //		_eventDispatcher->dispatchCustomEvent(Message::disp_effect, nullptr);
 		_eventDispatcher->dispatchCustomEvent(Message::explode, &index);
-		_eventDispatcher->dispatchCustomEvent(Message::get_beer, &index);
+		_eventDispatcher->dispatchCustomEvent(Message::beer_get, &index);
 	}
 	staticScore(score);
 }
@@ -175,6 +180,7 @@ void ControlCenter::evalution() {
 	int score = 0;
 	int index = curTime;
 	if (index >= DataVo::inst()->musicLength) return;
+	if (index < evaluateLim) return;
 
 	checkTrafficCone(curTime);
 	checkBeer(curTime);
@@ -190,11 +196,10 @@ void ControlCenter::gameStart(EventCustom* e = nullptr) {
 	DataVo::inst()->combos = 0;
 	DataVo::inst()->score = 0;
 	DataVo::inst()->distance = 0;
-	DataVo::inst()->energyValue = -1;
+	DataVo::inst()->energyValue = 9;
 	DataVo::inst()->speed = 50;
 	DataVo::inst()->speedX = 0;
-	_eventDispatcher->dispatchCustomEvent(Message::get_beer);
-	_eventDispatcher->dispatchCustomEvent(Message::disp_score);
+	DataVo::inst()->isBeerEffectStart = false;
 	for (curTime = -300; curTime < 0; curTime++)
 		_eventDispatcher->dispatchCustomEvent(Message::next_timeslice, nullptr);
 	auto cache = SpriteFrameCache::getInstance();
@@ -221,6 +226,8 @@ void ControlCenter::gameStart(EventCustom* e = nullptr) {
 			this->removeChild(sprite);;
 			_accTime = 0;
 			while (!inputQue.empty()) inputQue.pop();
+			_eventDispatcher->dispatchCustomEvent(Message::beer_get, nullptr);
+			_eventDispatcher->dispatchCustomEvent(Message::disp_score, nullptr);
 			CocosDenshion::SimpleAudioEngine::getInstance()->
 				playBackgroundMusic(DataVo::inst()->musicFile.c_str());
 			gameStatus = gs_playing;
@@ -356,6 +363,9 @@ void ControlCenter::roleMove() {
 void ControlCenter::fixedUpdate(float dt) {
 	if (gameStatus != gs_playing) return;
 	_accTime += dt * 1000;
+	static float _accRun = 0;
+	float rate = 1.0;
+	if (DataVo::inst()->isBeerEffectStart) rate = 1/1.5;
 	while ((curTime + 1) * TIMESLICE_SIZE < _accTime) {
 		curTime ++;
 		if (curTime >= DataVo::inst()->musicLength) {
@@ -364,7 +374,14 @@ void ControlCenter::fixedUpdate(float dt) {
 		}
 		roleMove();
 		evalution();
-		_eventDispatcher->dispatchCustomEvent(Message::next_timeslice, nullptr);
+		_eventDispatcher->dispatchCustomEvent(Message::next_roleaction, nullptr);
+		_accRun += TIMESLICE_SIZE;
+		while (_accRun >= TIMESLICE_SIZE * rate) {
+			_eventDispatcher->dispatchCustomEvent(Message::next_timeslice, nullptr);
+			_accRun -= TIMESLICE_SIZE * rate;
+		}
+		int index = curTime + 138 * rate;
+		_eventDispatcher->dispatchCustomEvent(Message::next_note, &index);
 		if (curTime % 15 == 0) 
 			staticDis();
 	}
@@ -375,3 +392,26 @@ void ControlCenter::receiveInput(EventCustom *event) {
 	inputQue.push(std::make_pair(curTime, event->getEventName()));
 }
 
+void ControlCenter::beerEffectStart() {
+	DataVo::inst()->isBeerEffectStart = true;
+	evaluateLim = curTime + 138 * 1/1.5;
+	_eventDispatcher->dispatchCustomEvent(Message::beer_effect_start, this);
+	this->runAction( Sequence::create(
+		DelayTime::create(10),
+		CCCallFunc::create([this](){
+			beerEffectStop();
+		}),
+		nullptr
+		));
+}
+void ControlCenter::beerEffectStop() {
+	DataVo::inst()->isBeerEffectStart = false;
+	evaluateLim = curTime + 138;
+	_eventDispatcher->dispatchCustomEvent(Message::beer_effect_stop, this);
+}
+
+void ControlCenter::clickBeer(EventCustom *event) {
+	if (DataVo::inst()->energyValue != 10) return;
+	DataVo::inst()->energyValue = 0;
+	beerEffectStart();
+}

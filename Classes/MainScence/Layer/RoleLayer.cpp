@@ -21,14 +21,14 @@ bool RoleLayer::init() {
 
 void RoleLayer::onEnter() {
 	Layer::onEnter();
-	_eventDispatcher->addCustomEventListener(Message::next_timeslice,
+	_eventDispatcher->addCustomEventListener(Message::next_roleaction,
 		CC_CALLBACK_1(RoleLayer::run, this));
 	_eventDispatcher->addCustomEventListener(Message::score,
 		CC_CALLBACK_1(RoleLayer::roleEffect, this));
 }
 
 void RoleLayer::onExit() {
-	_eventDispatcher->removeCustomEventListeners(Message::next_timeslice);
+	_eventDispatcher->removeCustomEventListeners(Message::next_roleaction);
 	_eventDispatcher->removeCustomEventListeners(Message::score);
 	Layer::onExit();
 }

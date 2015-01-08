@@ -48,6 +48,12 @@ void MusicLayer::onEnter() {
 	Layer::onEnter();
 	_eventDispatcher->addCustomEventListener(Message::next_timeslice,
 											 CC_CALLBACK_1(MusicLayer::run, this));
+	_eventDispatcher->addCustomEventListener(Message::next_note,
+											 CC_CALLBACK_1(MusicLayer::addNote, this));
+	_eventDispatcher->addCustomEventListener(Message::beer_effect_start,
+											 CC_CALLBACK_1(MusicLayer::explodeAll, this));
+	_eventDispatcher->addCustomEventListener(Message::beer_effect_stop,
+											 CC_CALLBACK_1(MusicLayer::explodeAll, this));
 	_eventDispatcher->addCustomEventListener(Message::disp_effect,
 											 CC_CALLBACK_1(MusicLayer::dispEffect, this));
 	_eventDispatcher->addCustomEventListener(Message::explode,
@@ -57,21 +63,25 @@ void MusicLayer::onEnter() {
 void MusicLayer::onExit() {
 	_eventDispatcher->removeCustomEventListeners(Message::explode);
 	_eventDispatcher->removeCustomEventListeners(Message::disp_effect);
+	_eventDispatcher->removeCustomEventListeners(Message::next_note);
 	_eventDispatcher->removeCustomEventListeners(Message::next_timeslice);
 	Layer::onExit();
 }
 
 void MusicLayer::run(EventCustom* event) {
 	addBuilding();
-	objects[0]->removeAllChildren();
 	auto cache = SpriteFrameCache::getInstance();
-	for (int i = 1; i < objects.size(); i++) {
+	int moveSpeed = 1;
+//	if (DataVo::inst()->isBeerEffectStart) moveSpeed = 2;
+	for (int i = 0; i < moveSpeed; i++) 
+		objects[i]->removeAllChildren();
+	for (int i = moveSpeed; i < objects.size(); i++) {
 		std::vector<Node*> v;
 		for (auto node : objects[i]->getChildren()) v.push_back(node);
 		for (auto node : v) {
 			node->retain();
 			objects[i]->removeChild(node);
-			objects[i - 1]->addChild(node);
+			objects[i - moveSpeed]->addChild(node);
 
 			if (node->getName() == "explode") {
 				int runCount = node->getTag();
@@ -87,14 +97,19 @@ void MusicLayer::run(EventCustom* event) {
 					}
 				}
 				if (runCount % 3 == 0) {
-					objects[i - 1]->removeChild(node);
+					objects[i - moveSpeed]->removeChild(node);
 					objects[i]->addChild(node);
 				}
 			}
 			node->release();
 		}
 	}
-	int index = curTime + 135;
+}
+
+
+void MusicLayer::addNote(EventCustom* event) {
+	int index = *(int*)event->getUserData();
+	//int index = curTime + 135;
 	if (index >= DataVo::inst()->musicLength || index < 0) return;
 	addTrafficCone(index);
 	addBeer(index);
@@ -114,6 +129,7 @@ void MusicLayer::addBuilding() {
 		sprite->setScale(1.5f);
 		sprite->setAnchorPoint(ccp(1.0f, 0.5f));
       	sprite->setNormalizedPosition(Vec2(-0.51, 0));
+		sprite->setTag(0);
 		objects.back()->addChild(sprite);
 	}
 	if (++lastR >= interval) {
@@ -126,6 +142,7 @@ void MusicLayer::addBuilding() {
 		sprite->setFlipX(true);
 		sprite->setAnchorPoint(ccp(0.0f, 0.5f));
       	sprite->setNormalizedPosition(Vec2(0.51, 0));
+		sprite->setTag(0);
 		objects.back()->addChild(sprite);
 	}
 }
@@ -134,12 +151,14 @@ void MusicLayer::addTrafficCone(int index) {
 		Sprite* sprite = Sprite::create("mainscence/obstacle.png");
 		sprite->setScale(1.5f);
       	sprite->setNormalizedPosition(Vec2(-0.13, 0));
+		sprite->setTag(index);
 		objects.back()->addChild(sprite);
 	}
 	if (DataVo::inst()->data[index][1]) {
 		Sprite* sprite = Sprite::create("mainscence/obstacle.png");
 		sprite->setScale(1.5f);
       	sprite->setNormalizedPosition(Vec2(0.13, 0));
+		sprite->setTag(index);
 		objects.back()->addChild(sprite);
 	}
 }
@@ -167,6 +186,7 @@ void MusicLayer::addBarrier(int index) {
       	Sprite* sprite = Sprite::create("mainscence/barrier.png");
 		sprite->setScale(1.5f);
       	sprite->setNormalizedPosition(Vec2(-0.19, 0));
+		sprite->setTag(index);
 		objects.back()->addChild(sprite);
 	}
 	if (DataVo::inst()->data[index][5] % interval == 1) {
@@ -174,6 +194,7 @@ void MusicLayer::addBarrier(int index) {
 		sprite->setScale(1.5f);
       	sprite->setNormalizedPosition(Vec2(0.19, 0));
 		sprite->setFlipX(true);
+		sprite->setTag(index);
 		objects.back()->addChild(sprite);
 	}
 }
@@ -185,12 +206,14 @@ void MusicLayer::addRailing(int index) {
       	sprite->setNormalizedPosition(Vec2(-0.14, 0));
 		sprite->setRotation(-6.5f);
 		sprite->setFlipX(true);
+		sprite->setTag(index);
 		objects.back()->addChild(sprite);
 	}
 	if (DataVo::inst()->data[index][7] % interval == 1) {
       	Sprite* sprite = Sprite::create("mainscence/railing.png");
 		sprite->setRotation(6.5f);
       	sprite->setNormalizedPosition(Vec2(0.14, 0));
+		sprite->setTag(index);
 		objects.back()->addChild(sprite);
 	}
 }
@@ -200,6 +223,7 @@ void MusicLayer::addManholeCover(int index) {
       	Sprite* sprite = Sprite::create("mainscence/manholecover.png");
       	sprite->setNormalizedPosition(Vec2(0, 0));
 		sprite->setScale(1.5f);
+		sprite->setTag(index);
 		objects.back()->addChild(sprite);
 	}
 }
@@ -240,3 +264,15 @@ void MusicLayer::explode(EventCustom *event) {
 	}
 }
 
+void MusicLayer::explodeAll(EventCustom *event) {
+	for (auto node : objects) {
+		auto notes = node->getChildren();
+		for (auto note : notes) {
+			if (note->getTag() > 100) {
+				note->setName("explode");
+				note->setTag(1);
+				note->setScale(5.2f);
+			}
+		}
+	}
+}

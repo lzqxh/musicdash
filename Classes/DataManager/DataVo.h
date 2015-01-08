@@ -51,6 +51,7 @@ public:
 	int _curTime;
 
 	//сно╥кы╤х
+	bool isBeerEffectStart;
 };
 
 #endif //__DATA_VO_H__
