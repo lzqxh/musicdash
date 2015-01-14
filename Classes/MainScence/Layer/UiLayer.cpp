@@ -8,7 +8,7 @@
 bool UiLayer::init() {
 	if (!Layer::init()) return false;
 
-	auto pauseButtonItem = MenuItemImage::create("mainscence/home.png", "mainscence/home.png",
+	auto pauseButtonItem = MenuItemImage::create("buttons/button_home_n.png", "buttons/button_home_s.png",
 		CC_CALLBACK_1(UiLayer::showControlMenu, this));
 	pauseButton = Menu::create(pauseButtonItem, nullptr);
 	pauseButton->setAnchorPoint(Point(0.0f, 0.0f));
@@ -85,7 +85,7 @@ void UiLayer::showControlMenu(Ref *pSender) {
 	_eventDispatcher->dispatchCustomEvent(Message::game_pause, nullptr);
 	CocosDenshion::SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
 
-	auto restart = MenuItemImage::create("mainscence/restart.png", "mainscence/restart.png", [this](Ref *) {
+	auto restart = MenuItemImage::create("buttons/button_restart_n.png", "buttons/button_restart_s.png", [this](Ref *) {
 		CocosDenshion::SimpleAudioEngine::getInstance()->
 			playEffect("soundeffect/button.wav");
 		this->removeChild(controlMenu);
@@ -94,7 +94,7 @@ void UiLayer::showControlMenu(Ref *pSender) {
 		pauseButton->runAction(MoveTo::create(0.5f, Point(50, 50)));
 		pauseButton->runAction(ScaleTo::create(0.5f, 0.6));
 	});
-	auto stop = MenuItemImage::create("mainscence/home.png", "mainscence/home.png", [this](Ref *) {
+	auto stop = MenuItemImage::create("buttons/button_home_n.png", "buttons/button_home_s.png", [this](Ref *) {
 		CocosDenshion::SimpleAudioEngine::getInstance()->
 			playEffect("soundeffect/button.wav");
 		this->removeChild(controlMenu);
@@ -105,7 +105,7 @@ void UiLayer::showControlMenu(Ref *pSender) {
 		auto scene = LoginScene::create();
 		Director::getInstance()->replaceScene(scene);
 	});
-	auto cancel = MenuItemImage::create("mainscence/start.png", "mainscence/start.png", [this](Ref *) {
+	auto cancel = MenuItemImage::create("buttons/button_play_n.png", "buttons/button_play_s.png", [this](Ref *) {
 		CocosDenshion::SimpleAudioEngine::getInstance()->
 			playEffect("soundeffect/button.wav");
 		this->removeChild(controlMenu);
@@ -198,36 +198,62 @@ void UiLayer::showGameoverBox(EventCustom *event) {
 	CocosDenshion::SimpleAudioEngine::getInstance()->
 		playBackgroundMusic("soundeffect/gameover.mp3");
 	auto bg = Sprite::create("mainscence/gameoverbox.png");
-	bg->setPosition(ccp(_center.x, _center.y + 100));
+	bg->setPosition(ccp(_center.x, _center.y));
 	bg->setAnchorPoint(ccp(0.5, 0.5));
-	bg->setScale(PNG_SCALE);
 
 	int n = DataVo::inst()->score;
 	auto scoreLabel = LabelBMFont::create(std::to_string(n), "fonts/number_2.fnt");
 	scoreLabel->setAnchorPoint(ccp(1.0, 0.5));
-	scoreLabel->setPosition(1200, 1500);
-	scoreLabel->setScale(1.0/PNG_SCALE);
+	scoreLabel->setPosition(designWidth * 8.7 / 11.29, designHeight * (1 - 14.26 / 18.81));
+	scoreLabel->setScale(1.3f);
 	bg->addChild(scoreLabel, 10);
 
 	n = DataVo::inst()->distance;
 	auto distanceLabel = LabelBMFont::create(std::to_string(n), "fonts/number_2.fnt");
 	distanceLabel->setAnchorPoint(ccp(1.0, 0.5));
-	distanceLabel->setPosition(1200, 1650);
-	distanceLabel->setScale(1.0/PNG_SCALE);
+	distanceLabel->setPosition(designWidth * 8.7 / 11.29, designHeight * (1 - 12.44 / 18.81));
+	distanceLabel->setScale(1.3f);
 	bg->addChild(distanceLabel, 10);
 
-	auto button1 = MenuItemImage::create("mainscence/home.png", "mainscence/home.png");
-	button1->setPosition(ccp(_center.x - 270, _center.y + 150));
+	auto name = DataVo::inst()->musicname;
+	auto pic = Sprite::create(name + ".png");
+	pic->setPosition(designWidth * 4.2 / 11.29, designHeight * (1 - 5.05 / 18.81));
+	pic->setRotation(-10);
+	bg->addChild(pic);
 
-	auto button2 = MenuItemImage::create("mainscence/restart.png", "mainscence/restart.png");
-	button2->setPosition(ccp(_center.x, _center.y + 150));
+	auto songname = Sprite::create(name + "name.png");
+	songname->setAnchorPoint(ccp(0, 0.5f));
+	songname->setPosition(designWidth * 1.72 / 11.29, designHeight * (1 - 10.96 / 18.81));
+	bg->addChild(songname);
 
-	auto button3 = MenuItemImage::create("mainscence/start.png", "mainscence/start.png");
-	button3->setPosition(ccp(_center.x + 270, _center.y + 150));
+	auto passGate = Sprite::create("mainscence/passgate.png");
+	passGate->setPosition(_center);
+	passGate->setScale(2.2f);
+	passGate->runAction(ScaleTo::create(1, 1));
+	bg->addChild(passGate);
 
-	auto menu = Menu::create(button1, button2, button3, nullptr);
-	menu->setAnchorPoint(ccp(0, 0));
-	menu->setPosition(ccp(550, 630));
+	auto button1 = MenuItemImage::create("buttons/button_home_n.png", "buttons/button_home_s.png");
+	button1->setPosition(ccp(designWidth * (0.72 + 1.97 * 0.5) / 11.29 , 50));
+	button1->setScale(0.8f);
+
+	auto button2 = MenuItemImage::create("buttons/button_restart_n.png", "buttons/button_restart_s.png");
+	button2->setPosition(ccp(designWidth * (0.72 + 1.97 * 1.5) / 11.29 , 50));
+	button2->setScale(0.8f);
+
+	auto button3 = MenuItemImage::create("buttons/button_shop_n.png", "buttons/button_shop_s.png");
+	button3->setPosition(ccp(designWidth * (0.72 + 1.97 * 2.5) / 11.29 , 50));
+	button3->setScale(0.8f);
+
+	auto button4 = MenuItemImage::create("buttons/button_rank_n.png", "buttons/button_rank_s.png");
+	button4->setPosition(ccp(designWidth * (0.72 + 1.97 * 3.5) / 11.29 , 50));
+	button4->setScale(0.8f);
+
+	auto button5 = MenuItemImage::create("buttons/button_achievement_n.png", "buttons/button_achievement_s.png");
+	button5->setPosition(ccp(designWidth * (0.72 + 1.97 * 4.5) / 11.29 , 50));
+	button5->setScale(0.8f);
+
+	auto menu = Menu::create(button1, button2, button3, button4, button5, nullptr);
+	menu->setPosition(0, 0);
 	bg->addChild(menu);
 
 	this->addChild(bg, 1000);
