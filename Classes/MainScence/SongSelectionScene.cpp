@@ -110,7 +110,7 @@ void SongSelectionScene::onTouchEnded( Touch * touch, Event *event) {
 	auto endPoint = touch->getLocation();
 	int distance = 10;
 	float actionTime = 0.2;
-	if(endPoint.x - beginPoint.x > distance) { //向右�?
+	if(endPoint.x - beginPoint.x > distance) { //向右�?
 		if(focus > 0) {
 			for (auto song : songs) {
 				auto move = MoveBy::create(actionTime, Vec2(460, 0));
@@ -119,7 +119,7 @@ void SongSelectionScene::onTouchEnded( Touch * touch, Event *event) {
 			focus--;
 		}
 	}
-	else if(endPoint.x - beginPoint.x < -distance) { //向左�?
+	else if(endPoint.x - beginPoint.x < -distance) { //向左�?
 		if(focus < songs.size() - 1) {
 			for (auto song : songs) {
 				auto move = MoveBy::create(actionTime, Vec2(-460, 0));
