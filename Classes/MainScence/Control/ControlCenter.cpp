@@ -210,7 +210,7 @@ void ControlCenter::gameStart(EventCustom* e = nullptr) {
 	sprite->setDisplayFrame(cache->getSpriteFrameByName("count_3.png"));
 	auto action = CCSequence::create(
 		DelayTime::create(1.0f),
-		CCCallFunc::create([sprite, cache](){
+		CCCallFunc::create([sprite, cache, this](){
 			sprite->setDisplayFrame(cache->getSpriteFrameByName("count_2.png"));
 		}),
 		DelayTime::create(1.0f),
