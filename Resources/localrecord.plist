@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"/>
+
+<plist version="1.0">
+    <dict>
+        <key>highest_record</key>
+        <dict>
+            <key>songs/song1</key>
+            <integer>0</integer>
+            <key>songs/song1/</key>
+            <integer>6240</integer>
+            <key>songs/song2</key>
+            <integer>0</integer>
+            <key>songs/song3</key>
+            <integer>0</integer>
+        </dict>
+        <key>coins</key>
+        <integer>190</integer>
+    </dict>
+</plist>

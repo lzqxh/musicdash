@@ -4,6 +4,7 @@
 #include "consts\ResolutionConst.h"
 #include "consts\Message.h"
 #include "DataManager/DataVo.h"
+#include "DataManager/LocalRecord.h"
 
 bool UiLayer::init() {
 	if (!Layer::init()) return false;
@@ -98,12 +99,7 @@ void UiLayer::showControlMenu(Ref *pSender) {
 		CocosDenshion::SimpleAudioEngine::getInstance()->
 			playEffect("soundeffect/button.wav");
 		this->removeChild(controlMenu);
-//		_eventDispatcher->dispatchCustomEvent(Message::game_stop, nullptr);
-//		pauseButton->setVisible(true);
-//		pauseButton->setPosition(50, 50);
-//		pauseButton->setScale(0.6);
-		auto scene = LoginScene::create();
-		Director::getInstance()->replaceScene(scene);
+		Director::getInstance()->popScene();
 	});
 	auto cancel = MenuItemImage::create("buttons/button_play_n.png", "buttons/button_play_s.png", [this](Ref *) {
 		CocosDenshion::SimpleAudioEngine::getInstance()->
@@ -175,7 +171,7 @@ void UiLayer::energyExp(EventCustom *event) {
 void UiLayer::displayScore(EventCustom *event) {
 	if (score) scoreBox->removeChild(score, true);
 
-	score = LabelBMFont::create(std::to_string(DataVo::inst()->score),
+	score = LabelBMFont::create(std::to_string(DataVo::inst()->coins),
 		"fonts/number_2.fnt");
 	scoreBox->addChild(score);
 	score->setAnchorPoint(Point(1, 0.5f));
@@ -195,28 +191,35 @@ void UiLayer::displayScore(EventCustom *event) {
 }
 
 void UiLayer::showGameoverBox(EventCustom *event) {
+	auto name = DataVo::inst()->musicname;
 	CocosDenshion::SimpleAudioEngine::getInstance()->
 		playBackgroundMusic("soundeffect/gameover.mp3");
 	auto bg = Sprite::create("mainscence/gameoverbox.png");
 	bg->setPosition(ccp(_center.x, _center.y));
 	bg->setAnchorPoint(ccp(0.5, 0.5));
 
-	int n = DataVo::inst()->score;
+	int n = DataVo::inst()->coins;
 	auto scoreLabel = LabelBMFont::create(std::to_string(n), "fonts/number_2.fnt");
 	scoreLabel->setAnchorPoint(ccp(1.0, 0.5));
 	scoreLabel->setPosition(designWidth * 8.7 / 11.29, designHeight * (1 - 14.26 / 18.81));
 	scoreLabel->setScale(1.3f);
 	bg->addChild(scoreLabel, 10);
 
-	n = DataVo::inst()->distance;
-	auto distanceLabel = LabelBMFont::create(std::to_string(n), "fonts/number_2.fnt");
+	int dis = DataVo::inst()->distance;
+	auto distanceLabel = LabelBMFont::create(std::to_string(dis), "fonts/number_2.fnt");
 	distanceLabel->setAnchorPoint(ccp(1.0, 0.5));
 	distanceLabel->setPosition(designWidth * 8.7 / 11.29, designHeight * (1 - 12.44 / 18.81));
 	distanceLabel->setScale(1.3f);
 	bg->addChild(distanceLabel, 10);
 
-	auto name = DataVo::inst()->musicname;
-	auto pic = Sprite::create(name + ".png");
+	n = LocalRecord::inst()->getHighestRecord(name);
+	auto highestLabel = LabelBMFont::create(std::to_string(n), "fonts/number_2.fnt");
+	highestLabel->setAnchorPoint(ccp(1.0, 0.5));
+	highestLabel->setPosition(designWidth * 8.7 / 11.29, designHeight * (1 - 10.62 / 18.81));
+	highestLabel->setScale(1.3f);
+	bg->addChild(highestLabel, 10);
+
+	auto pic = Sprite::create(name + "pic.png");
 	pic->setPosition(designWidth * 4.2 / 11.29, designHeight * (1 - 5.05 / 18.81));
 	pic->setRotation(-10);
 	bg->addChild(pic);
@@ -228,8 +231,8 @@ void UiLayer::showGameoverBox(EventCustom *event) {
 
 	auto passGate = Sprite::create("mainscence/passgate.png");
 	passGate->setPosition(_center);
-	passGate->setScale(2.2f);
-	passGate->runAction(ScaleTo::create(1, 1));
+	passGate->setScale(3.2f);
+	passGate->runAction(Sequence::create(DelayTime::create(4.8f), ScaleTo::create(0.3, 1), nullptr));
 	bg->addChild(passGate);
 
 	auto button1 = MenuItemImage::create("buttons/button_home_n.png", "buttons/button_home_s.png");
@@ -260,8 +263,7 @@ void UiLayer::showGameoverBox(EventCustom *event) {
 	button1->setCallback([this, bg, menu](Ref *){
 		CocosDenshion::SimpleAudioEngine::getInstance()->
 			playEffect("soundeffect/button.wav");
-		auto scene = LoginScene::create();
-		Director::getInstance()->replaceScene(scene);
+		Director::getInstance()->popScene();
 	});
 
 	button2->setCallback([this, bg](Ref *){
@@ -270,14 +272,6 @@ void UiLayer::showGameoverBox(EventCustom *event) {
 		CocosDenshion::SimpleAudioEngine::getInstance()->
 			playEffect("soundeffect/button.wav");
 	});
-
-	button3->setCallback([&](Ref *){
-		CocosDenshion::SimpleAudioEngine::getInstance()->
-			playEffect("soundeffect/button.wav");
-		auto scene = SongSelectionScene::create();
-		Director::getInstance()->replaceScene(scene);
-	});
-
 	return;
 }
 

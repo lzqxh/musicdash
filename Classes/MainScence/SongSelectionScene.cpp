@@ -63,19 +63,12 @@ bool SongSelectionScene::init() {
 	fg->addChild(title);
 
 	//just for test;
-	auto song1 = Sprite::create("songs/test.png");
-	auto song2 = Sprite::create("songs/song2.png");
-	auto song3 = Sprite::create("songs/song3.png");
-	auto songName1 = Sprite::create("songs/testname.png");
-	songName1->setScale(0.5f);
-	auto songName2 = Sprite::create("songs/testname.png");
-	songName2->setScale(0.5f);
-	auto songName3 = Sprite::create("songs/testname.png");
-	songName3->setScale(0.5f);
+	for (int i = 1; i <= 3; i++) {
+		auto song = Sprite::create("songs/song"+std::to_string(i)+"/pic.png");
+		auto songName = Sprite::create("songs/song"+std::to_string(i)+"/name.png");
 
-	songs.push_back(std::make_pair(song1, songName1));
-	songs.push_back(std::make_pair(song2, songName2));
-	songs.push_back(std::make_pair(song3, songName3));
+		songs.push_back(std::make_pair(song, songName));
+	}
 
 	focus = 0;
 
@@ -98,8 +91,6 @@ bool SongSelectionScene::init() {
 
 void SongSelectionScene::onEnter() {
 	Scene::onEnter();
-	CocosDenshion::SimpleAudioEngine::getInstance()->
-		playBackgroundMusic("soundeffect/bg.mp3", true);
 }
 
 bool SongSelectionScene::onTouchBegan( Touch * touch, Event *event) {
@@ -129,6 +120,7 @@ void SongSelectionScene::onTouchEnded( Touch * touch, Event *event) {
 		}
 	}
 	else { //点击
+		DataVo::inst()->load("songs/song1/");
 		auto game = GameWorld::create();
 		Director::getInstance()->pushScene(game);
 	}

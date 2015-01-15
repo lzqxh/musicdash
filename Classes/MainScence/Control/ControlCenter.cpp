@@ -12,15 +12,9 @@
 
 bool ControlCenter::init() {
 	if (!CCNode::init()) return false;
-
-	//test ¼´¼ÓÔØµÄ¸è´ÊÃû×Ö
-	DataVo::inst()->load("songs/test");
-	gameStatus = gs_pause;
-
+	gameStatus = gs_over;
 	auto inputCenter= InputCenter::create();
 	addChild(inputCenter);
-
-
 	return true;
 }
 
@@ -82,6 +76,7 @@ void ControlCenter::staticScore(int score) {
 		else {
 			DataVo::inst()->combos++;
 			DataVo::inst()->speedX = 10;
+			DataVo::inst()->coins += 1;
 		}
 		_eventDispatcher->dispatchCustomEvent(Message::score, &score);
 		_eventDispatcher->dispatchCustomEvent(Message::disp_score, nullptr);
@@ -147,7 +142,6 @@ void ControlCenter::checkBeer(int index) {
 	if (data[2] == 1) score = atLeft();
 	if (data[3] == 1) score = atRight();
 	if (score > 0) {
-//		_eventDispatcher->dispatchCustomEvent(Message::disp_effect, nullptr);
 		_eventDispatcher->dispatchCustomEvent(Message::explode, &index);
 		_eventDispatcher->dispatchCustomEvent(Message::beer_get, &index);
 	}
@@ -158,6 +152,7 @@ void ControlCenter::checkBarrier(int index) {
 	int numbers = 200 / TIMESLICE_SIZE, score = 0;
 	if (data[4] % numbers == 1) score = atRight();
 	if (data[5] % numbers == 1) score = atLeft();
+	if (score == 1) score = 2;
 	staticScore(score);
 }
 
@@ -194,7 +189,6 @@ void ControlCenter::gameStart(EventCustom* e = nullptr) {
 		stopBackgroundMusic();
 	roleStatus = Sliding_M;
 	DataVo::inst()->combos = 0;
-	DataVo::inst()->score = 0;
 	DataVo::inst()->distance = 0;
 	DataVo::inst()->energyValue = 9;
 	DataVo::inst()->speed = 50;
@@ -202,28 +196,32 @@ void ControlCenter::gameStart(EventCustom* e = nullptr) {
 	DataVo::inst()->isBeerEffectStart = false;
 	for (curTime = -300; curTime < 0; curTime++)
 		_eventDispatcher->dispatchCustomEvent(Message::next_timeslice, nullptr);
+	_eventDispatcher->dispatchCustomEvent(Message::beer_get, nullptr);
+	_eventDispatcher->dispatchCustomEvent(Message::disp_score, nullptr);
 	auto cache = SpriteFrameCache::getInstance();
-	auto sprite = Sprite::create();
-	sprite->setPosition(ccp(_center.x, _center.y + 150));
-	this->addChild(sprite);
+	_countSprite = Sprite::create();
+	_countSprite->setPosition(ccp(_center.x, _center.y + 150));
+	this->addChild(_countSprite);
 
-	sprite->setDisplayFrame(cache->getSpriteFrameByName("count_3.png"));
+	_countSprite->setDisplayFrame(cache->getSpriteFrameByName("count_3.png"));
+	gameStatus = gs_counting;
 	auto action = CCSequence::create(
 		DelayTime::create(1.0f),
-		CCCallFunc::create([sprite, cache, this](){
-			sprite->setDisplayFrame(cache->getSpriteFrameByName("count_2.png"));
+		CCCallFunc::create([cache, this](){
+			_countSprite->setDisplayFrame(cache->getSpriteFrameByName("count_2.png"));
 		}),
 		DelayTime::create(1.0f),
-		CCCallFunc::create([sprite, cache](){
-			sprite->setDisplayFrame(cache->getSpriteFrameByName("count_1.png"));
+		CCCallFunc::create([this, cache](){
+			_countSprite->setDisplayFrame(cache->getSpriteFrameByName("count_1.png"));
 		}),
 		DelayTime::create(1.0f),
-		CCCallFunc::create([sprite, cache](){
-			sprite->setDisplayFrame(cache->getSpriteFrameByName("count_go.png"));
+		CCCallFunc::create([this, cache](){
+			_countSprite->setDisplayFrame(cache->getSpriteFrameByName("count_go.png"));
 		}),
 		DelayTime::create(0.3f),
-		CCCallFunc::create([sprite, this](){
-			this->removeChild(sprite);;
+		CCCallFunc::create([this](){
+			this->removeChild(_countSprite);;
+			_countSprite = nullptr;
 			_accTime = 0;
 			while (!inputQue.empty()) inputQue.pop();
 			_eventDispatcher->dispatchCustomEvent(Message::beer_get, nullptr);
@@ -234,24 +232,33 @@ void ControlCenter::gameStart(EventCustom* e = nullptr) {
 		}),
 		nullptr
 	);
-	sprite->runAction(action);
+	_countSprite->runAction(action);
 }
 
 void ControlCenter::gameOver(EventCustom* event = nullptr) {
 	gameStatus = gs_over;
+	DataVo::inst()->updateRecord();
 }
 
 void ControlCenter::gamePause(EventCustom* event = nullptr) {
-	gameStatus = gs_pause;
+	if (gameStatus	== gs_counting) {
+		gameStatus = gs_over;
+		removeChild(_countSprite);
+		_countSprite = nullptr;
+	}
+	else gameStatus = gs_pause;
 	CocosDenshion::SimpleAudioEngine::getInstance()->
 		pauseBackgroundMusic();
 	return;
 }
 
 void ControlCenter::gameResume(EventCustom* event = nullptr) {
-	gameStatus = gs_playing;
-	CocosDenshion::SimpleAudioEngine::getInstance()->
-		resumeBackgroundMusic();
+	if (gameStatus == gs_pause) {
+		gameStatus = gs_playing;
+		CocosDenshion::SimpleAudioEngine::getInstance()->
+			resumeBackgroundMusic();
+	}
+	else if (gameStatus == gs_over) gameStart();
 	return;
 }
 
