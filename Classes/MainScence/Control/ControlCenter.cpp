@@ -123,13 +123,11 @@ int ControlCenter::atRight() {
 }
 int ControlCenter::atRailL() {
 	switch (roleStatus) {
-	case Sliding_UR:
-	case Action_M2UR:
+	case Sliding_UL:
+	case Action_M2UL:
 		return 2;
-	case Action_UR2M:
+	case Action_UL2M:
 		return 1;
-	case Sliding_R:
-		return 0;
 	default:
 		return -1;
 	}
@@ -141,8 +139,6 @@ int ControlCenter::atRailR() {
 		return 2;
 	case Action_UR2M:
 		return 1;
-	case Sliding_L:
-		return 0;
 	default:
 		return -1;
 	}
@@ -222,8 +218,11 @@ void ControlCenter::gameStart(EventCustom* e = nullptr) {
 	DataVo::inst()->speed = 50;
 	DataVo::inst()->speedX = 0;
 	DataVo::inst()->isBeerEffectStart = false;
-	for (curTime = -300; curTime < 0; curTime++)
+	for (curTime = -138; curTime < 0; curTime++) {
 		_eventDispatcher->dispatchCustomEvent(Message::next_timeslice, nullptr);
+		int index = curTime + 138;
+		if (index >= 0) _eventDispatcher->dispatchCustomEvent(Message::next_note, &index);
+	}
 	_eventDispatcher->dispatchCustomEvent(Message::beer_get, nullptr);
 	_eventDispatcher->dispatchCustomEvent(Message::disp_score, nullptr);
 	auto cache = SpriteFrameCache::getInstance();
@@ -252,8 +251,6 @@ void ControlCenter::gameStart(EventCustom* e = nullptr) {
 			_countSprite = nullptr;
 			_accTime = 0;
 			while (!inputQue.empty()) inputQue.pop();
-			_eventDispatcher->dispatchCustomEvent(Message::beer_get, nullptr);
-			_eventDispatcher->dispatchCustomEvent(Message::disp_score, nullptr);
 			CocosDenshion::SimpleAudioEngine::getInstance()->
 				playBackgroundMusic(DataVo::inst()->musicFile.c_str());
 			gameStatus = gs_playing;
@@ -351,7 +348,7 @@ void ControlCenter::roleMove() {
 			lastInput = "";
 		}
 		else if (data[curTime][6] == 0) {
-			roleStatus = RoleStatus::Sliding_R;
+			roleStatus = RoleStatus::Sliding_L;
 		}
 		break;
 	case Sliding_UR:
@@ -383,31 +380,33 @@ void ControlCenter::roleMove() {
 		}
         else if (lastInput == Message::input_slide_up_left) {
         	bool upL = false;
-        	for (int i = curTime; i < curTime + 10 && i < data.size(); i++)
+        	for (int i = curTime; i < curTime + 50 && i < data.size(); i++)
         		if (data[i][6]) upL = true;
         	if (upL) {
         		roleStatus = RoleStatus::Action_M2UL;
-        		DataVo::inst()->actionCount = 14;
+        		DataVo::inst()->actionCount = 25;
         	}
-			else { //若左边无栏杆，则转化为跳跃操作
-				roleStatus = RoleStatus::Action_JUMP;
-				DataVo::inst()->actionCount = 35;
-			}
-        	lastInput = "";
+			lastInput = "";
+//			else { //若左边无栏杆，则转化为跳跃操作
+//				roleStatus = RoleStatus::Action_JUMP;
+//				DataVo::inst()->actionCount = 35;
+//			}
+//        	lastInput = "";
         }
 		else if (lastInput == Message::input_slide_up_right) {
 			bool upR = false;
-			for (int i = curTime; i < curTime+10 && i < data.size(); i++)
+			for (int i = curTime; i < curTime+50 && i < data.size(); i++)
 				if (data[i][7]) upR = true;
 			if (upR) {
 				roleStatus = RoleStatus::Action_M2UR;
-				DataVo::inst()->actionCount = 14;
-			}
-			else {
-				roleStatus = RoleStatus::Action_JUMP;
-				DataVo::inst()->actionCount = 35;
+				DataVo::inst()->actionCount = 25;
 			}
 			lastInput = "";
+//			else {
+//				roleStatus = RoleStatus::Action_JUMP;
+//				DataVo::inst()->actionCount = 35;
+//			}
+//			lastInput = "";
 		}
         break;
 	};

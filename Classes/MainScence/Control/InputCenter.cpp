@@ -82,22 +82,26 @@ void InputCenter::onTouchMoved(Touch *touch, Event *event) {
 				_eventDispatcher->dispatchCustomEvent(Message::input_slide_up);
 				lastInput = Message::input_slide_up;
 			}
-			else if ( slope >= -2 && slope <= -0.5 && y > 0 && lastInput != Message::input_slide_up_left) {
+			else if ( slope >= -2 && slope <= -0.5 && y > 0 && 
+				lastInput != Message::input_slide_up_left && lastInput != Message::input_slide_left) {
 				_eventDispatcher->dispatchCustomEvent(Message::input_touch_release);
 				_eventDispatcher->dispatchCustomEvent(Message::input_slide_up_left);
 				lastInput = Message::input_slide_up_left;
 			}
-			else if ( slope > -0.5 && slope < 0.5 && x < 0 && lastInput != Message::input_slide_left) {
+			else if ( slope > -0.5 && slope < 0.5 && x < 0 && 
+				lastInput != Message::input_slide_up_left && lastInput != Message::input_slide_left) {
 				_eventDispatcher->dispatchCustomEvent(Message::input_touch_release);
 				_eventDispatcher->dispatchCustomEvent(Message::input_slide_left);
 				lastInput = Message::input_slide_left;
 			}
-			else if ( slope > -0.5 && slope < 0.5 && x > 0 && lastInput != Message::input_slide_right) {
+			else if ( slope > -0.5 && slope < 0.5 && x > 0 &&
+				lastInput != Message::input_slide_up_right && lastInput != Message::input_slide_right) {
 				_eventDispatcher->dispatchCustomEvent(Message::input_touch_release);
 				_eventDispatcher->dispatchCustomEvent(Message::input_slide_right);
 				lastInput = Message::input_slide_right;
 			}
-			else if ( slope >= 0.5 && slope <= 2 && y > 0 && lastInput != Message::input_slide_up_right) {
+			else if ( slope >= 0.5 && slope <= 2 && y > 0 &&
+				lastInput != Message::input_slide_up_right && lastInput != Message::input_slide_right) {
 				_eventDispatcher->dispatchCustomEvent(Message::input_touch_release);
 				_eventDispatcher->dispatchCustomEvent(Message::input_slide_up_right);
 				lastInput = Message::input_slide_up_right;
@@ -106,6 +110,7 @@ void InputCenter::onTouchMoved(Touch *touch, Event *event) {
 		start = center;
 	}
 }
+
 void InputCenter::onTouchEnded(Touch *touch, Event *event) {
 	ms->runAction(Sequence::create(
 		DelayTime::create(1),
@@ -114,6 +119,7 @@ void InputCenter::onTouchEnded(Touch *touch, Event *event) {
 	ms = nullptr;
 	if ( touchStatus == 1 ) {
 		_eventDispatcher->dispatchCustomEvent(Message::input_touch_release);
+		lastInput = "";
 		touchStatus = 0;
 	}
 	else 

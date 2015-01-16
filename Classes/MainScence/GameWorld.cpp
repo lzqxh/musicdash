@@ -6,6 +6,7 @@ using namespace cocos2d;
 bool GameWorld::init() {
 	if ( !Scene::init()) return false;
 
+
 	musicLayer = MusicLayer::create();
 	this->addChild(musicLayer);
 
@@ -15,11 +16,12 @@ bool GameWorld::init() {
 	scoreLayer = ScoreLayer::create();
 	this->addChild(scoreLayer);
 
-	auto controlCenter = ControlCenter::create();
-	addChild(controlCenter);
 
 	uiLayer = UiLayer::create();
 	this->addChild(uiLayer);
+
+	auto controlCenter = ControlCenter::create();
+	addChild(controlCenter);
 
 	return true;
 }

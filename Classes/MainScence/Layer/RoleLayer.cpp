@@ -45,6 +45,7 @@ void RoleLayer::run(EventCustom *event) {
 		role->setPosition(designWidth/2, 200);
 	case Sliding_L:
 	case Sliding_R:
+		role->setPosition(role->getPositionX(), 200);
 		if (++eventCount < 10)
 			break;
 		eventCount = 0;
@@ -108,10 +109,10 @@ void RoleLayer::run(EventCustom *event) {
 }
 
 Vec2 RoleLayer::nextM2ULPosition(int index) {
-	return Vec2(-8.61f, 3.1f);
+	return Vec2(-8.61f*14/25, 3.1f);
 }
 Vec2 RoleLayer::nextM2URPosition(int index) {
-	return Vec2(11.61f, 3.1f);
+	return Vec2(11.61f*14/25, 3.1f);
 }
 
 void RoleLayer::roleEffect(EventCustom *event) {
