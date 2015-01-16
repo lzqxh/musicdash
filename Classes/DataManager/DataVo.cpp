@@ -12,6 +12,8 @@
 
 
 #include "DataVo.h"
+
+#include "LocalRecord.h"
 #include "DataManager\MusicNote.h"
 #include "consts\ResolutionConst.h"
 #include "consts\MyConsts.h"
@@ -74,8 +76,9 @@ void DataVo::resolve(unsigned char *pBuffer, int st, int ed) {
 
 void DataVo::load(std::string name) {
 	data.clear();
+	coins = LocalRecord::inst()->getCoins();
 	musicname = name;
-	std::string filepath = name + ".csv";
+	std::string filepath = name + "data.csv";
 
 	unsigned char* pBuffer = NULL;
 	ssize_t bufferSize = 0;
@@ -89,7 +92,12 @@ void DataVo::load(std::string name) {
 		}
 	musicLength = data.size();
 
-	musicFile = name + ".mp3";
+	musicFile = name + "music.mp3";
 	CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic(musicFile.c_str());
+}
 
+void DataVo::updateRecord() {
+	LocalRecord::inst()->setCoins(coins);
+	LocalRecord::inst()->setHighestRecord(musicname, distance);
+	LocalRecord::inst()->writeToFile();
 }

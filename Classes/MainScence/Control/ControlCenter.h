@@ -12,7 +12,8 @@ USING_NS_CC;
 enum GameStatus {
 	gs_playing, 
 	gs_pause,
-	gs_over
+	gs_over,
+	gs_counting
 };
 
 class ControlCenter: public CCNode {
@@ -20,6 +21,7 @@ private:
 	float _accTime;
 	std::queue<std::pair<int, std::string> > inputQue;
 	std::string lastInput;
+	Sprite* _countSprite;
 	void roleMove();
 
 	int evaluateLim;

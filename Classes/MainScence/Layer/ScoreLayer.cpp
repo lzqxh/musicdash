@@ -21,7 +21,6 @@ void ScoreLayer::onEnter() {
 				c = 1;
 			else 
 				c = 0;
-			DataVo::inst()->score += (1000 + 10 * DataVo::inst()->combos) * c;
 	});
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(l1, this);
 	auto l2 = EventListenerCustom::create(Message::score,

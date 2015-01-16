@@ -38,6 +38,7 @@ public:
 	}
 
 	void load(std::string);
+	void updateRecord();
 	std::string musicname, musicFile;
 	int musicLength;
 	std::vector<std::vector<int> > data;
@@ -46,7 +47,7 @@ public:
 	int actionCount;
 	int combos;
 	int energyValue;
-	int score, distance;
+	int coins, distance;
 	int speed, speedX;
 	int _curTime;
 
