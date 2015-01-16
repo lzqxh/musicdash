@@ -49,17 +49,61 @@ void InputCenter::onTouchMoved(Touch *touch, Event *event) {
 	auto y = center.y - start.y;
 	auto d = x*x + y*y;
 
-	if ( touchStatus == 0 ) {
-		if ( d > 10000 ) {
-			if ( abs(x) >= abs(y) && x < 0 )
-				_eventDispatcher->dispatchCustomEvent(Message::input_slide_left);
-			else if ( abs(x) >= abs(y) && x >=0 )
-				_eventDispatcher->dispatchCustomEvent(Message::input_slide_right);
-			else if ( abs(x) < abs(y) && y >= 0 )
+	if ( d > 10000 ) {
+		auto slope = y / x;
+
+		if ( touchStatus == 0 ) {
+			if ( slope < -2 || slope > 2 && y > 0 ) {
 				_eventDispatcher->dispatchCustomEvent(Message::input_slide_up);
+				lastInput = Message::input_slide_up;
+			}
+			else if ( slope >= -2 && slope <= -0.5 && y > 0 ) {
+				_eventDispatcher->dispatchCustomEvent(Message::input_slide_up_left);
+				lastInput = Message::input_slide_up_left;
+			}
+			else if ( slope > -0.5 && slope < 0.5 && x < 0 ) {
+				_eventDispatcher->dispatchCustomEvent(Message::input_slide_left);
+				lastInput = Message::input_slide_left;
+			}
+			else if ( slope > -0.5 && slope < 0.5 && x > 0 ) {
+				_eventDispatcher->dispatchCustomEvent(Message::input_slide_right);
+				lastInput = Message::input_slide_right;
+			}
+			else if ( slope >= 0.5 && slope <= 2 && y > 0) {
+				_eventDispatcher->dispatchCustomEvent(Message::input_slide_up_right);
+				lastInput = Message::input_slide_up_right;
+			}
 
 			touchStatus = 1;
 		}
+		else {
+			if ( slope < -2 || slope > 2 && y > 0 && lastInput != Message::input_slide_up) {
+				_eventDispatcher->dispatchCustomEvent(Message::input_touch_release);
+				_eventDispatcher->dispatchCustomEvent(Message::input_slide_up);
+				lastInput = Message::input_slide_up;
+			}
+			else if ( slope >= -2 && slope <= -0.5 && y > 0 && lastInput != Message::input_slide_up_left) {
+				_eventDispatcher->dispatchCustomEvent(Message::input_touch_release);
+				_eventDispatcher->dispatchCustomEvent(Message::input_slide_up_left);
+				lastInput = Message::input_slide_up_left;
+			}
+			else if ( slope > -0.5 && slope < 0.5 && x < 0 && lastInput != Message::input_slide_left) {
+				_eventDispatcher->dispatchCustomEvent(Message::input_touch_release);
+				_eventDispatcher->dispatchCustomEvent(Message::input_slide_left);
+				lastInput = Message::input_slide_left;
+			}
+			else if ( slope > -0.5 && slope < 0.5 && x > 0 && lastInput != Message::input_slide_right) {
+				_eventDispatcher->dispatchCustomEvent(Message::input_touch_release);
+				_eventDispatcher->dispatchCustomEvent(Message::input_slide_right);
+				lastInput = Message::input_slide_right;
+			}
+			else if ( slope >= 0.5 && slope <= 2 && y > 0 && lastInput != Message::input_slide_up_right) {
+				_eventDispatcher->dispatchCustomEvent(Message::input_touch_release);
+				_eventDispatcher->dispatchCustomEvent(Message::input_slide_up_right);
+				lastInput = Message::input_slide_up_right;
+			}
+		}
+		start = center;
 	}
 }
 void InputCenter::onTouchEnded(Touch *touch, Event *event) {

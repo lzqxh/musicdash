@@ -61,7 +61,6 @@ void DataVo::resolve(unsigned char *pBuffer, int st, int ed) {
     	data.push_back(std::vector<int>(9, false));
 	if (type < 0) return;
 	if (last < 0) last = 0;
-	if (type == 7) type = 8;
 	else type --;
 
     data[index][type] = 1;

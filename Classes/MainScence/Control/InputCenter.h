@@ -22,6 +22,7 @@ private:
 	MotionStreak * ms;
 	Point start;
 	bool touchStatus; //0为未产生有效touch，1表示已产生有效touch
+	std::string lastInput;
 };
 
 #endif //__INPUT_CENTER_H__

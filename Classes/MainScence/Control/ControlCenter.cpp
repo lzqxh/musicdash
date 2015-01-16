@@ -35,7 +35,11 @@ void ControlCenter::onEnter() {
 											 CC_CALLBACK_1(ControlCenter::receiveInput, this));
 	_eventDispatcher->addCustomEventListener(Message::input_touch_release,
 											 CC_CALLBACK_1(ControlCenter::receiveInput, this));
-	_eventDispatcher->addCustomEventListener(Message::input_click,
+//	_eventDispatcher->addCustomEventListener(Message::input_click,
+//											 CC_CALLBACK_1(ControlCenter::receiveInput, this));
+	_eventDispatcher->addCustomEventListener(Message::input_slide_up_left,
+											 CC_CALLBACK_1(ControlCenter::receiveInput, this));
+	_eventDispatcher->addCustomEventListener(Message::input_slide_up_right,
 											 CC_CALLBACK_1(ControlCenter::receiveInput, this));
 
 	_eventDispatcher->addCustomEventListener(Message::game_pause,
@@ -61,11 +65,13 @@ void ControlCenter::onExit() {
 	_eventDispatcher->removeCustomEventListeners(Message::game_resume);
 	_eventDispatcher->removeCustomEventListeners(Message::game_pause);
 
-	_eventDispatcher->removeCustomEventListeners(Message::input_click);
+//	_eventDispatcher->removeCustomEventListeners(Message::input_click);
 	_eventDispatcher->removeCustomEventListeners(Message::input_touch_release);
 	_eventDispatcher->removeCustomEventListeners(Message::input_slide_left);
 	_eventDispatcher->removeCustomEventListeners(Message::input_slide_right);
 	_eventDispatcher->removeCustomEventListeners(Message::input_slide_up);
+	_eventDispatcher->removeCustomEventListeners(Message::input_slide_up_left);
+	_eventDispatcher->removeCustomEventListeners(Message::input_slide_up_right);
 
 	_eventDispatcher->removeCustomEventListeners(Message::beer_click);
 	this->unschedule(schedule_selector(ControlCenter::fixedUpdate));
@@ -120,9 +126,31 @@ int ControlCenter::atRight() {
 		return -1;
 	}
 }
-int ControlCenter::atRail() {
-	return (roleStatus == Sliding_UL || roleStatus == Action_M2UL || roleStatus == Action_UL2M ||
-		    roleStatus == Sliding_UR || roleStatus == Action_M2UR || roleStatus == Action_UR2M);
+int ControlCenter::atRailL() {
+	switch (roleStatus) {
+	case Sliding_UR:
+	case Action_M2UR:
+		return 2;
+	case Action_UR2M:
+		return 1;
+	case Sliding_R:
+		return 0;
+	default:
+		return -1;
+	}
+}
+int ControlCenter::atRailR() {
+	switch (roleStatus) {
+	case Sliding_UR:
+	case Action_M2UR:
+		return 2;
+	case Action_UR2M:
+		return 1;
+	case Sliding_L:
+		return 0;
+	default:
+		return -1;
+	}
 }
 
 int ControlCenter::atJumping() {
@@ -164,8 +192,8 @@ void ControlCenter::checkBarrier(int index) {
 void ControlCenter::checkRailing(int index) {
 	auto &data = DataVo::inst()->data[index];
 	int numbers = 200 / TIMESLICE_SIZE, score = 0;
-	if (data[6] % numbers == 1) score = atRail();
-	if (data[7] % numbers == 1) score = atRail();
+	if (data[6] % numbers == 1) score = atRailL();
+	if (data[7] % numbers == 1) score = atRailR();
 	staticScore(score);
 }
 
@@ -309,17 +337,25 @@ void ControlCenter::roleMove() {
 		}
 		break;
 	case Sliding_UL:
-		if (data[curTime][6] == 0) {
+		//if (data[curTime][6] == 0) {
+		if (lastInput == Message::input_touch_release) {
 			roleStatus = RoleStatus::Action_UL2M;
 			DataVo::inst()->actionCount = 14;
 			lastInput = "";
 		}
+		else if (data[curTime][6] == 0) {
+			roleStatus = RoleStatus::Sliding_R;
+		}
 		break;
 	case Sliding_UR:
-		if (data[curTime][7] == 0) {
+		//if (data[curTime][7] == 0) {
+		if (lastInput == Message::input_touch_release) {
 			roleStatus = RoleStatus::Action_UR2M;
 			DataVo::inst()->actionCount = 14;
 			lastInput = "";
+		}
+		else if (data[curTime][7] == 0) {
+			roleStatus = RoleStatus::Sliding_R;
 		}
 		break;
 	case Sliding_M:
@@ -338,18 +374,34 @@ void ControlCenter::roleMove() {
 			DataVo::inst()->actionCount = 35;
 			lastInput = "";
 		}
-        else if (lastInput == Message::input_click) {
-        	bool upL = false, upR = false;
-        	for (int i = curTime; i < curTime + 10 && i < data.size(); i++) {
+        else if (lastInput == Message::input_slide_up_left) {
+        	bool upL = false;
+        	for (int i = curTime; i < curTime + 10 && i < data.size(); i++)
         		if (data[i][6]) upL = true;
-        		if (data[i][7]) upR = true;
-        	}
-        	if (upL || upR) {
-        		roleStatus = upL ? RoleStatus::Action_M2UL : RoleStatus::Action_M2UR;
+        	if (upL) {
+        		roleStatus = RoleStatus::Action_M2UL;
         		DataVo::inst()->actionCount = 14;
         	}
+			else { //若左边无栏杆，则转化为跳跃操作
+				roleStatus = RoleStatus::Action_JUMP;
+				DataVo::inst()->actionCount = 35;
+			}
         	lastInput = "";
         }
+		else if (lastInput == Message::input_slide_up_right) {
+			bool upR = false;
+			for (int i = curTime; i < curTime+10 && i < data.size(); i++)
+				if (data[i][7]) upR = true;
+			if (upR) {
+				roleStatus = RoleStatus::Action_M2UR;
+				DataVo::inst()->actionCount = 14;
+			}
+			else {
+				roleStatus = RoleStatus::Action_JUMP;
+				DataVo::inst()->actionCount = 35;
+			}
+			lastInput = "";
+		}
         break;
 	};
 

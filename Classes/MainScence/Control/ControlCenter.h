@@ -27,7 +27,8 @@ private:
 
 	int atLeft();
 	int atRight();
-	int atRail();
+	int atRailL();
+	int atRailR();
 	int atJumping();
 	void checkTrafficCone(int index);
 	void checkBeer(int index);
