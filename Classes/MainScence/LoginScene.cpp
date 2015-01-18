@@ -104,7 +104,6 @@ bool LoginScene::init() {
 	layer->addChild(mainMenu, 1000);
 
 	btnStart->runAction(RepeatForever::create(Sequence::create(
-//		ShakyTiles3D::create(0.5, Size(1, 1), 15, false),
 		Repeat::create( Sequence::create(
 			RotateBy::create(0.07, 9),
 			RotateBy::create(0.14, -18),

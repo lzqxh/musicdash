@@ -5,10 +5,10 @@
 #define designHeight	1111
 #define PNG_SCALE (0.5)
 
-#define _left   0
-#define _right	designWidth
-#define _top	designHeight 
-#define _bottom 0
+#define _myleft   0
+#define _myright	designWidth
+#define _mytop	designHeight 
+#define _mybottom 0
 
 #define _center ccp(designWidth/2, designHeight/2)
 

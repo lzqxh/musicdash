@@ -1,6 +1,7 @@
 #include "AppDelegate.h"
 #include "MainScence\GameWorld.h"
 #include "MainScence\LoginScene.h"
+#include "MainScence\SongSelectionScene.h"
 #include "consts\ResolutionConst.h"
 
 USING_NS_CC;
@@ -41,7 +42,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	cache->addSpriteFramesWithFile("rolemove/rolemove.plist");
 	cache->addSpriteFramesWithFile("mainscence/energy.plist");
 //    auto scene = GameWorld::create();
-    auto scene = LoginScene::create();
+//    auto scene = LoginScene::create();
+    auto scene = SongSelectionScene::create();
 
     // run
     director->runWithScene(scene);

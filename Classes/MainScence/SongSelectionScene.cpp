@@ -4,124 +4,179 @@
 
 using namespace cocos2d;
 
+
 bool SongSelectionScene::init() {
 	if (!Scene::init()) return false;
 
 	bg = Layer::create();
 	addChild(bg);
 
-	auto bgPic = Sprite::create("loginscence/songSelect.png");
+	auto bgPic = Sprite::create("songselectscence/bg.png");
 	bgPic->setAnchorPoint(Point(0,0));
-	bgPic->setScale(0.8);
-	bg->addChild(bgPic, -1000);
+	auto fgPic = Sprite::create("songselectscence/fg.png");
+	fgPic->setAnchorPoint(Point(0,0));
+	bg->addChild(bgPic, -1);
+	bg->addChild(fgPic);
 
-	auto cloud1 = Sprite::create("loginscence/cloud.png");
-	auto cloud2 = Sprite::create("loginscence/cloud.png");
-	auto cloud3 = Sprite::create("loginscence/cloud.png");
-	bg->addChild(cloud1, 1);
-	bg->addChild(cloud2, 1);
-	bg->addChild(cloud3, 1);
-	cloud1->setScale(0.5);
-	cloud2->setScale(0.3);
-	cloud3->setScale(0.7);
-	cloud1->setOpacity(0);
-	cloud2->setOpacity(0);
-	cloud3->setOpacity(0);
-	cloud1->setPosition( 100, designHeight - 100 );
-	cloud2->setPosition( designWidth - 100, designHeight - 50 );
-	cloud3->setPosition( designWidth/2, designHeight - 130 );
-	float actionTime = 0.4;
-	auto cloud11 = MoveBy::create(10 * actionTime, Vec2(designWidth - 200, 0));
-	cloud1->runAction(RepeatForever::create(Sequence::create(
-		cloud11, cloud11->reverse(), nullptr)));
-	cloud1->runAction(FadeTo::create(actionTime, 200));
-	auto cloud21 = MoveBy::create(16 * actionTime, Vec2(-designWidth + 200, 0));
-	cloud2->runAction(RepeatForever::create(Sequence::create(
-		cloud21, cloud21->reverse(), nullptr)));
-	cloud2->runAction(FadeTo::create(actionTime, 200));
-	auto cloud31 = MoveBy::create(20 * actionTime, Vec2(designWidth/2 , 0));
-	cloud3->runAction(RepeatForever::create(Sequence::create(
-		cloud31, cloud31->reverse(), cloud31->reverse(), cloud31, nullptr)));
-	cloud3->runAction(FadeTo::create(actionTime, 200));
-
-	fg = Layer::create();
-	addChild(fg);
-	auto backButton = MenuItemImage::create("mainscence/home.png", "mainscence/home.png",
+	auto backButton = MenuItemImage::create("songselectscence/button_back_n.png", "songselectscence/button_back_s.png",
 		[this](Ref *){Director::getInstance()->popScene();});
-	backButton->setScale(0.8);
-	menu = Menu::create(backButton, nullptr);
-	menu->setPosition(designWidth - 100, designHeight - 100);
-	fg->addChild(menu, 1000);
+	auto startButton = MenuItemImage::create("songselectscence/button_start_n.png", "songselectscence/button_start_s.png",
+		[this](Ref *){Director::getInstance()->popScene();});
+	backButton->setPosition(ccp(161, 122));
+	backButton->setAnchorPoint(ccp(0.5, 0.5));
+	startButton->setPosition(ccp(404, 122));
+	startButton->setAnchorPoint(ccp(0.5, 0.5));
+	menu = Menu::create(backButton, startButton, nullptr);
+	menu->setPosition(ccp(0, 0));
+	bg->addChild(menu);
 
-//	auto title = LabelTTF::create("选择音乐", "fonts/Marker Felt.ttf", 70);
-//	title->setColor(Color3B::BLACK);
 	auto title = Sprite::create();
 	title->setSpriteFrame("xuanzeyinyue.png");
 	title->setAnchorPoint(Point(0, 1));
 	title->setScale(0.7f);
 	title->setPosition(30, designHeight-50);
-	fg->addChild(title);
+	bg->addChild(title, 2);
 
+	for (int i = 0; i < 5; i++) {
+		stars[i] = Sprite::create("songselectscence/star_1.png");
+		stars[i]->setAnchorPoint(ccp(0.5, 0));
+		stars[i]->setPosition(ccp(225 + i * 78 , 511));
+		bg->addChild(stars[i]);
+	}
 	//just for test;
-	for (int i = 1; i <= 3; i++) {
-		auto song = Sprite::create("songs/song"+std::to_string(i)+"/pic.png");
-		auto songName = Sprite::create("songs/song"+std::to_string(i)+"/name.png");
-
-		songs.push_back(std::make_pair(song, songName));
+	for (int i = 1; i <= 6; i++) {
+		std::string musicname = "songs/song" + std::to_string(i);
+		songs.push_back(musicname);
+		difficult.push_back((i % 3 + 2));
 	}
 
+ //添加列表
+	float w = 98;
+	float h = 198;
+
+    TableView *tableView= TableView::create(this, Size(464, 225));
+	tableView->setDirection(ScrollView::Direction::VERTICAL);
+    tableView->setAnchorPoint(ccp(0, 0));
+    tableView->setPosition(98, 198);
+    tableView->setDelegate(this);
+    tableView->setVerticalFillOrder(TableView::VerticalFillOrder::TOP_DOWN);
+    bg->addChild(tableView, -1);
+    tableView->reloadData();
+
+//	Sprite* tableBg = Sprite::create("songselectscence/song_table.png");
+ //   tableBg->setPosition(ccp(w, h));
+//	tableBg->setAnchorPoint(ccp(0, 0));
+//	fg->addChild(tableBg);
 	focus = 0;
-
-	for (int i = 0; i < songs.size(); i++) {
-		fg->addChild(songs[i].first);
-//		fg->addChild(songs[i].second);
-		songs[i].first->setAnchorPoint(Point(0.5, 0));
-//		songs[i].second->setAnchorPoint(Point(0.5, 0));
-		songs[i].first->setPosition(designWidth/2 + 460*i, designHeight/2 - 100 );
-//		songs[i].second->setPosition(designWidth/2 + 460*i, designHeight/2 - 175);
-	}
-
-	auto touchListener = EventListenerTouchOneByOne::create();
-	touchListener->onTouchBegan = CC_CALLBACK_2(SongSelectionScene::onTouchBegan, this);
-	touchListener->onTouchEnded = CC_CALLBACK_2(SongSelectionScene::onTouchEnded, this);
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
+	namePic = musicPic = nullptr;
+	showSongInfo(0);
 
 	return true;
 }
 
 void SongSelectionScene::onEnter() {
 	Scene::onEnter();
+	auto touchListener = EventListenerTouchOneByOne::create();
+	touchListener->onTouchBegan = CC_CALLBACK_2(SongSelectionScene::onTouchBegan, this);
+	touchListener->onTouchEnded = CC_CALLBACK_2(SongSelectionScene::onTouchEnded, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
+}
+
+void SongSelectionScene::onExit() {
+	Scene::onExit();
 }
 
 bool SongSelectionScene::onTouchBegan( Touch * touch, Event *event) {
-	beginPoint = touch->getLocation();
 	return true;
 }
+
 void SongSelectionScene::onTouchEnded( Touch * touch, Event *event) {
-	auto endPoint = touch->getLocation();
-	int distance = 10;
-	float actionTime = 0.2;
-	if(endPoint.x - beginPoint.x > distance) { //向右�?
-		if(focus > 0) {
-			for (auto song : songs) {
-				auto move = MoveBy::create(actionTime, Vec2(460, 0));
-				song.first->runAction(move);
-			}
-			focus--;
-		}
-	}
-	else if(endPoint.x - beginPoint.x < -distance) { //向左�?
-		if(focus < songs.size() - 1) {
-			for (auto song : songs) {
-				auto move = MoveBy::create(actionTime, Vec2(-460, 0));
-				song.first->runAction(move);
-			}
-			focus++;
-		}
-	}
-	else { //点击
-		DataVo::inst()->load("songs/song1/");
-		auto game = GameWorld::create();
-		Director::getInstance()->pushScene(game);
-	}
 }
+
+void SongSelectionScene::showSongInfo(int idx) {
+	std::string musicname = songs[idx];
+	if (musicPic) {
+		bg->removeChild(musicPic);
+	}
+	musicPic = Sprite::create(musicname + "/pic.png");
+	musicPic->setPosition(ccp(334, 831));
+	musicPic->setAnchorPoint(ccp(0.5, 0.5));
+	musicPic->setScale(0.9f);
+	bg->addChild(musicPic);
+
+	if (namePic) {
+		bg->removeChild(namePic);
+	}
+	namePic = Sprite::create(musicname + "/name.png");
+	namePic->setPosition(ccp(334, 585));
+	namePic->setAnchorPoint(ccp(0.5, 0.5));
+	namePic->setScale(0.9f);
+	bg->addChild(namePic);
+
+	CCTexture2D *aTexture=CCTextureCache::sharedTextureCache()->addImage("songselectscence/star_1.png");
+	CCTexture2D *bTexture=CCTextureCache::sharedTextureCache()->addImage("songselectscence/star_2.png");
+	for (int i = 0; i < difficult[idx]; i++) 
+		stars[i]->setTexture(aTexture);
+	for (int i = difficult[idx]; i < 5; i++)
+		stars[i]->setTexture(bTexture);
+}
+void SongSelectionScene::scrollViewDidScroll(ScrollView *view) { }
+void SongSelectionScene::scrollViewDidZoom(ScrollView *view) { }
+
+
+void SongSelectionScene::tableCellTouched(TableView *table, TableViewCell *cell) {
+	auto lastCell = table->cellAtIndex(focus);
+	if (lastCell) {
+		CCTexture2D *aTexture=CCTextureCache::sharedTextureCache()->addImage("songselectscence/table_list_bg.png");
+		CCSprite *pSprite=(CCSprite *)lastCell->getChildByTag(221);
+		pSprite->setTexture(aTexture);
+	}
+
+	focus = cell->getIdx();
+	CCTexture2D *aTexture=CCTextureCache::sharedTextureCache()->addImage("songselectscence/table_list_bg_s.png");
+	CCSprite *pSprite=(CCSprite *)cell->getChildByTag(221);
+	pSprite->setTexture(aTexture);
+//	CCBlink *blink_ = CCBlink::create(1.0f, 7);
+ //   cell->runAction(blink_);
+
+	showSongInfo(focus);
+}
+
+CCSize SongSelectionScene::cellSizeForTable(TableView *table) {
+    return CCSizeMake(464, 74);
+}
+
+//生成cell
+TableViewCell* SongSelectionScene::tableCellAtIndex(TableView *table, ssize_t idx) {
+    CCString *nameString=CCString::createWithFormat("%s/name.png", songs[idx].data());
+    
+    TableViewCell *cell = table->dequeueCell();
+    if (!cell) {
+        cell = new TableViewCell();
+        cell->autorelease();
+	}
+	else cell->removeAllChildren();
+
+	Sprite *iconBg = Sprite::create(
+		focus == idx ? "songselectscence/table_list_bg_s.png" : "songselectscence/table_list_bg.png");
+	Sprite *iconSprite = Sprite::create(nameString->getCString());
+	iconSprite->setNormalizedPosition(ccp(0.5, 0.5));
+	iconBg->addChild(iconSprite);
+	iconBg->setAnchorPoint(CCPointZero);
+	iconBg->setPosition(ccp(0, 0));
+	iconBg->setTag(221);
+	cell->addChild(iconBg);
+    return cell;
+}
+
+ssize_t SongSelectionScene::numberOfCellsInTableView(TableView *table) {
+	return 6;
+}
+
+void SongSelectionScene::tableCellHighlight(TableView *table, TableViewCell *cell) {
+}
+
+void SongSelectionScene::tableCellUnhighlight(TableView *table, TableViewCell *cell) {
+}
+
+
