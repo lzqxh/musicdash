@@ -1,12 +1,13 @@
 #include "LoginScene.h"
 #include "consts\ResolutionConst.h"
 #include "SongSelectionScene.h"
+#include "HelpScene.h"
+#include "OptionsScene.h"
 using namespace cocos2d;
 using namespace ui;
 
 bool LoginScene::init() {
 	if (!Scene::init()) return false;
-
 
     float delayTime = 3;
     float actionTime = 0.4;
@@ -90,13 +91,14 @@ bool LoginScene::init() {
 	btnStart->setPosition(183, -160);
 	auto btnShop = MenuItemImage::create("loginscence/button_shop_n.png", "loginscence/button_shop_s.png");
 	btnShop->setPosition(180, -285);
-	auto btnHelp = MenuItemImage::create("loginscence/button_help_n.png", "loginscence/button_help_s.png");
+	auto btnHelp = MenuItemImage::create("loginscence/button_help_n.png", "loginscence/button_help_s.png", 
+		CC_CALLBACK_1(LoginScene::onHelpButtonClicked, this));
 	btnHelp->setPosition(170, -390);
 	auto btnAchieve = MenuItemImage::create("loginscence/button_achievement_n.png", 
 		"loginscence/button_achievement_s.png");
 	btnAchieve->setPosition(-150, -440);
 	auto btnOptions = MenuItemImage::create("loginscence/button_options_n.png", 
-		"loginscence/button_options_s.png");
+		"loginscence/button_options_s.png", CC_CALLBACK_1(LoginScene::onOptionsButtonClicked, this));
 	btnOptions->setPosition(0, -440);
 
 	mainMenu = Menu::create(btnStart, btnShop, btnHelp, btnAchieve, btnOptions, nullptr);
@@ -139,4 +141,14 @@ void LoginScene::onEnter() {
 void LoginScene::onStartButtonClicked(Ref *pSender) {
 	auto songSelection = SongSelectionScene::create();
 	Director::getInstance()->pushScene(TransitionFade::create(0.5,songSelection));
+}
+
+void LoginScene::onHelpButtonClicked(Ref *pSender) {
+	auto help = HelpScene::create();
+	Director::getInstance()->pushScene(TransitionFade::create(0.5,help));
+}
+
+void LoginScene::onOptionsButtonClicked(Ref *pSender) {
+	auto options = OptionsScene::create();
+	Director::getInstance()->pushScene(TransitionFade::create(0.5, options));
 }

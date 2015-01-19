@@ -42,8 +42,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	cache->addSpriteFramesWithFile("rolemove/rolemove.plist");
 	cache->addSpriteFramesWithFile("mainscence/energy.plist");
 //    auto scene = GameWorld::create();
-//    auto scene = LoginScene::create();
-    auto scene = SongSelectionScene::create();
+    auto scene = LoginScene::create();
+//    auto scene = SongSelectionScene::create();
 
     // run
     director->runWithScene(scene);

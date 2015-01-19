@@ -12,6 +12,8 @@ public:
 
 	virtual void onEnter();
 	void onStartButtonClicked(Ref *);
+	void onOptionsButtonClicked(Ref *);
+	void onHelpButtonClicked(Ref *);
 
 private:
 	Layer *layer;

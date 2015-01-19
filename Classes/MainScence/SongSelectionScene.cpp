@@ -21,7 +21,7 @@ bool SongSelectionScene::init() {
 	auto backButton = MenuItemImage::create("songselectscence/button_back_n.png", "songselectscence/button_back_s.png",
 		[this](Ref *){Director::getInstance()->popScene();});
 	auto startButton = MenuItemImage::create("songselectscence/button_start_n.png", "songselectscence/button_start_s.png",
-		[this](Ref *){Director::getInstance()->popScene();});
+		[this](Ref *){Director::getInstance()->pushScene(GameWorld::create());});
 	backButton->setPosition(ccp(161, 122));
 	backButton->setAnchorPoint(ccp(0.5, 0.5));
 	startButton->setPosition(ccp(404, 122));
