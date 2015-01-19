@@ -20,6 +20,7 @@ public:
 	CREATE_FUNC(SongSelectionScene);
 
 	void showSongInfo(int);
+	void showModeInfo(int);
 
 	virtual void onEnter();
 	virtual void onExit();
@@ -50,10 +51,11 @@ private:
 	std::vector<std::string> songs;
 	std::vector<int> difficult;
 	Point beginPoint;
-	int focus;
+	int focus, mode;
 	Sprite* musicPic;
 	Sprite* namePic;
 	Sprite* stars[5];
+	Sprite* modes[3];
 };
 
 #endif

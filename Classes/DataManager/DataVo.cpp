@@ -78,7 +78,7 @@ void DataVo::load(std::string name) {
 	data.clear();
 	coins = LocalRecord::inst()->getCoins();
 	musicname = name;
-	std::string filepath = name + "data.csv";
+	std::string filepath = name + "/data.csv";
 
 	unsigned char* pBuffer = NULL;
 	ssize_t bufferSize = 0;
@@ -92,8 +92,13 @@ void DataVo::load(std::string name) {
 		}
 	musicLength = data.size();
 
-	musicFile = name + "music.mp3";
+	musicFile = name + "/music.mp3";
 	CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic(musicFile.c_str());
+}
+
+void DataVo::setMode(int _mode) {
+	mode = _mode;
+	skinPath = "mainscence/skins/+" + std::to_string(mode) + "/";
 }
 
 void DataVo::updateRecord() {

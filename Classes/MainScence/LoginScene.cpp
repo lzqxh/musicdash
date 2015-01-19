@@ -92,11 +92,11 @@ bool LoginScene::init() {
 	btnShop->setPosition(180, -285);
 	auto btnHelp = MenuItemImage::create("loginscence/button_help_n.png", "loginscence/button_help_s.png");
 	btnHelp->setPosition(170, -390);
-	auto btnAchieve = MenuItemImage::create("loginscence/button_achievement_n.png", 
-		"loginscence/button_achievement_s.png");
+	auto btnAchieve = MenuItemImage::create("buttons/button_achievement_n.png", 
+		"buttons/button_achievement_s.png");
 	btnAchieve->setPosition(-150, -440);
-	auto btnOptions = MenuItemImage::create("loginscence/button_options_n.png", 
-		"loginscence/button_options_s.png");
+	auto btnOptions = MenuItemImage::create("buttons/button_options_n.png", 
+		"buttons/button_options_s.png");
 	btnOptions->setPosition(0, -440);
 
 	mainMenu = Menu::create(btnStart, btnShop, btnHelp, btnAchieve, btnOptions, nullptr);

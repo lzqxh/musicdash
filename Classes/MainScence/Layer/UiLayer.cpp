@@ -215,16 +215,16 @@ void UiLayer::showGameoverBox(EventCustom *event) {
 	n = LocalRecord::inst()->getHighestRecord(name);
 	auto highestLabel = LabelBMFont::create(std::to_string(n), "fonts/number_2.fnt");
 	highestLabel->setAnchorPoint(ccp(1.0, 0.5));
-	highestLabel->setPosition(designWidth * 8.7 / 11.29, designHeight * (1 - 10.62 / 18.81));
+	highestLabel->setPosition(designWidth * 8.7 / 11.29, designHeight * (1 - 16.08 / 18.81));
 	highestLabel->setScale(1.3f);
 	bg->addChild(highestLabel, 10);
 
-	auto pic = Sprite::create(name + "pic.png");
+	auto pic = Sprite::create(name + "/pic.png");
 	pic->setPosition(designWidth * 4.2 / 11.29, designHeight * (1 - 5.05 / 18.81));
 	pic->setRotation(-10);
 	bg->addChild(pic);
 
-	auto songname = Sprite::create(name + "name.png");
+	auto songname = Sprite::create(name + "/name.png");
 	songname->setAnchorPoint(ccp(0, 0.5f));
 	songname->setPosition(designWidth * 1.72 / 11.29, designHeight * (1 - 10.96 / 18.81));
 	bg->addChild(songname);

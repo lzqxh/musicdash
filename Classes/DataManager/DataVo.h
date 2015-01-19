@@ -39,7 +39,9 @@ public:
 
 	void load(std::string);
 	void updateRecord();
-	std::string musicname, musicFile;
+	void setMode(int);
+	std::string musicname, musicFile, skinPath;
+	int mode;
 	int musicLength;
 	std::vector<std::vector<int> > data;
 

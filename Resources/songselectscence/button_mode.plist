@@ -4,70 +4,83 @@
     <dict>
         <key>frames</key>
         <dict>
-            <key>gameover_back_1.png</key>
+            <key>button_mode1_n.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{436,2},{45,47}}</string>
+                <string>{{56,302},{148,52}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <true/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{45,47}}</string>
+                <string>{{0,0},{148,52}}</string>
                 <key>sourceSize</key>
-                <string>{45,47}</string>
+                <string>{148,52}</string>
             </dict>
-            <key>gameover_back_2.png</key>
+            <key>button_mode1_s.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{387,2},{45,47}}</string>
+                <string>{{2,302},{148,52}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <true/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{45,47}}</string>
+                <string>{{0,0},{148,52}}</string>
                 <key>sourceSize</key>
-                <string>{45,47}</string>
+                <string>{148,52}</string>
             </dict>
-            <key>gameover_bg.png</key>
+            <key>button_mode2_n.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2,2},{283,482}}</string>
-                <key>offset</key>
-                <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{283,482}}</string>
-                <key>sourceSize</key>
-                <string>{283,482}</string>
-            </dict>
-            <key>gameover_restart_1.png</key>
-            <dict>
-                <key>frame</key>
-                <string>{{337,2},{44,48}}</string>
+                <string>{{56,152},{148,52}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <true/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{44,48}}</string>
+                <string>{{0,0},{148,52}}</string>
                 <key>sourceSize</key>
-                <string>{44,48}</string>
+                <string>{148,52}</string>
             </dict>
-            <key>gameover_restart_2.png</key>
+            <key>button_mode2_s.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{287,2},{44,48}}</string>
+                <string>{{2,152},{148,52}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <true/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{44,48}}</string>
+                <string>{{0,0},{148,52}}</string>
                 <key>sourceSize</key>
-                <string>{44,48}</string>
+                <string>{148,52}</string>
+            </dict>
+            <key>button_mode3_n.png</key>
+            <dict>
+                <key>frame</key>
+                <string>{{56,2},{148,52}}</string>
+                <key>offset</key>
+                <string>{0,0}</string>
+                <key>rotated</key>
+                <true/>
+                <key>sourceColorRect</key>
+                <string>{{0,0},{148,52}}</string>
+                <key>sourceSize</key>
+                <string>{148,52}</string>
+            </dict>
+            <key>button_mode3_s.png</key>
+            <dict>
+                <key>frame</key>
+                <string>{{2,2},{148,52}}</string>
+                <key>offset</key>
+                <string>{0,0}</string>
+                <key>rotated</key>
+                <true/>
+                <key>sourceColorRect</key>
+                <string>{{0,0},{148,52}}</string>
+                <key>sourceSize</key>
+                <string>{148,52}</string>
             </dict>
         </dict>
         <key>metadata</key>
@@ -75,13 +88,13 @@
             <key>format</key>
             <integer>2</integer>
             <key>realTextureFileName</key>
-            <string>gameover.png</string>
+            <string>button_mode.png</string>
             <key>size</key>
-            <string>{512,512}</string>
+            <string>{128,512}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:b8ef8807aa1f6acfe5b7c4b862a6bebb$</string>
+            <string>$TexturePacker:SmartUpdate:87df1cd58cc8c937dae1ad25029a5cf5$</string>
             <key>textureFileName</key>
-            <string>gameover.png</string>
+            <string>button_mode.png</string>
         </dict>
     </dict>
 </plist>

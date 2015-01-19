@@ -21,7 +21,12 @@ bool SongSelectionScene::init() {
 	auto backButton = MenuItemImage::create("songselectscence/button_back_n.png", "songselectscence/button_back_s.png",
 		[this](Ref *){Director::getInstance()->popScene();});
 	auto startButton = MenuItemImage::create("songselectscence/button_start_n.png", "songselectscence/button_start_s.png",
-		[this](Ref *){Director::getInstance()->popScene();});
+		[this](Ref *){
+			DataVo::inst()->load(songs[focus]);
+			DataVo::inst()->setMode(mode);
+			auto scene = GameWorld::create();
+			Director::getInstance()->pushScene(scene);
+		});
 	backButton->setPosition(ccp(161, 122));
 	backButton->setAnchorPoint(ccp(0.5, 0.5));
 	startButton->setPosition(ccp(404, 122));
@@ -54,22 +59,27 @@ bool SongSelectionScene::init() {
 	float w = 98;
 	float h = 198;
 
-    TableView *tableView= TableView::create(this, Size(464, 225));
+	focus = 0;
+	mode = 0;
+	namePic = musicPic = nullptr;
+	showSongInfo(0);
+
+	for (int i = 0; i < 3; i++) {
+		modes[i] = Sprite::create();
+		modes[i]->setAnchorPoint(ccp(0.5, 0.5));
+		modes[i]->setPosition(180+ i * 154, 447);
+		bg->addChild(modes[i], -1);
+	}
+	showModeInfo(0);
+
+    TableView *tableView= TableView::create(this, Size(464, 224));
 	tableView->setDirection(ScrollView::Direction::VERTICAL);
     tableView->setAnchorPoint(ccp(0, 0));
-    tableView->setPosition(98, 198);
+    tableView->setPosition(98, 196);
     tableView->setDelegate(this);
     tableView->setVerticalFillOrder(TableView::VerticalFillOrder::TOP_DOWN);
     bg->addChild(tableView, -1);
     tableView->reloadData();
-
-//	Sprite* tableBg = Sprite::create("songselectscence/song_table.png");
- //   tableBg->setPosition(ccp(w, h));
-//	tableBg->setAnchorPoint(ccp(0, 0));
-//	fg->addChild(tableBg);
-	focus = 0;
-	namePic = musicPic = nullptr;
-	showSongInfo(0);
 
 	return true;
 }
@@ -91,6 +101,20 @@ bool SongSelectionScene::onTouchBegan( Touch * touch, Event *event) {
 }
 
 void SongSelectionScene::onTouchEnded( Touch * touch, Event *event) {
+	for (int i = 0; i < 2; i++) {
+		if (modes[i]->boundingBox().containsPoint(touch->getLocation())) 
+			showModeInfo(i);
+	}
+}
+
+void SongSelectionScene::showModeInfo(int idx) {
+	auto cache = SpriteFrameCache::getInstance();
+	cache->addSpriteFramesWithFile("songselectscence/button_mode.plist");
+	mode = idx;
+	for (int i = 0; i < 3; i++) {
+		std::string url = "button_mode" + std::to_string(i+1) + "_" + (i == mode ? "s" : "n") + ".png";
+		modes[i]->setSpriteFrame(cache->getSpriteFrameByName(url));
+	}
 }
 
 void SongSelectionScene::showSongInfo(int idx) {
@@ -119,6 +143,9 @@ void SongSelectionScene::showSongInfo(int idx) {
 		stars[i]->setTexture(aTexture);
 	for (int i = difficult[idx]; i < 5; i++)
 		stars[i]->setTexture(bTexture);
+
+	CocosDenshion::SimpleAudioEngine::getInstance()->
+		playBackgroundMusic((musicname + "/demo.mp3").c_str());
 }
 void SongSelectionScene::scrollViewDidScroll(ScrollView *view) { }
 void SongSelectionScene::scrollViewDidZoom(ScrollView *view) { }
@@ -136,14 +163,15 @@ void SongSelectionScene::tableCellTouched(TableView *table, TableViewCell *cell)
 	CCTexture2D *aTexture=CCTextureCache::sharedTextureCache()->addImage("songselectscence/table_list_bg_s.png");
 	CCSprite *pSprite=(CCSprite *)cell->getChildByTag(221);
 	pSprite->setTexture(aTexture);
-//	CCBlink *blink_ = CCBlink::create(1.0f, 7);
- //   cell->runAction(blink_);
+	CCBlink *blink_ = CCBlink::create(0.2f, 1);
+   cell->runAction(blink_);
 
 	showSongInfo(focus);
+
 }
 
 CCSize SongSelectionScene::cellSizeForTable(TableView *table) {
-    return CCSizeMake(464, 74);
+    return CCSizeMake(464, 76);
 }
 
 //生成cell
