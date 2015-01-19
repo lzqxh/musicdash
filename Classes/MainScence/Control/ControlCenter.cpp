@@ -9,6 +9,7 @@
 #include "consts\ResolutionConst.h"
 #include "consts\MyConsts.h"
 #include "consts\Message.h"
+#include "..\OptionsScene.h"
 
 bool ControlCenter::init() {
 	if (!CCNode::init()) return false;
@@ -413,8 +414,9 @@ void ControlCenter::roleMove() {
 
 	if (lastInput == "" && !inputQue.empty()) {
 		if (inputQue.front().second != Message::input_touch_release)
-			CocosDenshion::SimpleAudioEngine::getInstance()->
-				playEffect("soundeffect/input.wav");
+			if (OptionsScene::ifSound)
+				CocosDenshion::SimpleAudioEngine::getInstance()->
+					playEffect("soundeffect/input.wav");
 		inputQue.pop();
 	}
 }

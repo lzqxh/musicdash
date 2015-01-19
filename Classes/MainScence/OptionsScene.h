@@ -12,6 +12,7 @@ public:
 	virtual void onEnter();
 	virtual void onExit();
 
+	static bool ifMusic;
 	static bool ifSound;
 	static bool ifShack;
 };

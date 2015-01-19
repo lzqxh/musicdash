@@ -1,6 +1,7 @@
 #include "OptionsScene.h"
 #include "consts/ResolutionConst.h"
 
+bool OptionsScene::ifMusic = true;
 bool OptionsScene::ifShack = true;
 bool OptionsScene::ifSound = true;
 
@@ -17,6 +18,7 @@ bool OptionsScene::init() {
 	auto music = MenuItemImage::create("buttons/button_music_n.png", "buttons/button_music_n.png",
 		[this](Ref *){
 			auto inst = CocosDenshion::SimpleAudioEngine::getInstance();
+			OptionsScene::ifMusic = !OptionsScene::ifMusic;
 			if (inst->isBackgroundMusicPlaying())
 				inst->end();
 			else
@@ -24,12 +26,7 @@ bool OptionsScene::init() {
 	});
 	auto sound = MenuItemImage::create("buttons/button_sound_n.png", "buttons/button_sound_n.png",
 		[this](Ref *){
-			auto inst = CocosDenshion::SimpleAudioEngine::getInstance();
 			OptionsScene::ifSound = !OptionsScene::ifSound;
-			if (OptionsScene::ifSound)
-				inst->resumeAllEffects();
-			else
-				inst->stopAllEffects();
 	});
 	auto shack = MenuItemImage::create("buttons/button_shack_n.png", "buttons/button_shack_n.png",
 		[this](Ref *){

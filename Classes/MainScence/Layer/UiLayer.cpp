@@ -5,6 +5,7 @@
 #include "consts\Message.h"
 #include "DataManager/DataVo.h"
 #include "DataManager/LocalRecord.h"
+#include "../OptionsScene.h"
 
 bool UiLayer::init() {
 	if (!Layer::init()) return false;
@@ -87,8 +88,9 @@ void UiLayer::showControlMenu(Ref *pSender) {
 	CocosDenshion::SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
 
 	auto restart = MenuItemImage::create("buttons/button_restart_n.png", "buttons/button_restart_s.png", [this](Ref *) {
-		CocosDenshion::SimpleAudioEngine::getInstance()->
-			playEffect("soundeffect/button.wav");
+		if (OptionsScene::ifSound)
+			CocosDenshion::SimpleAudioEngine::getInstance()->
+				playEffect("soundeffect/button.wav");
 		this->removeChild(controlMenu);
 		_eventDispatcher->dispatchCustomEvent(Message::game_restart, nullptr);
 		pauseButton->setVisible(true);
@@ -96,14 +98,16 @@ void UiLayer::showControlMenu(Ref *pSender) {
 		pauseButton->runAction(ScaleTo::create(0.5f, 0.6));
 	});
 	auto stop = MenuItemImage::create("buttons/button_home_n.png", "buttons/button_home_s.png", [this](Ref *) {
-		CocosDenshion::SimpleAudioEngine::getInstance()->
-			playEffect("soundeffect/button.wav");
+		if (OptionsScene::ifSound)
+			CocosDenshion::SimpleAudioEngine::getInstance()->
+				playEffect("soundeffect/button.wav");
 		this->removeChild(controlMenu);
 		Director::getInstance()->popScene();
 	});
 	auto cancel = MenuItemImage::create("buttons/button_play_n.png", "buttons/button_play_s.png", [this](Ref *) {
-		CocosDenshion::SimpleAudioEngine::getInstance()->
-			playEffect("soundeffect/button.wav");
+		if (OptionsScene::ifSound)
+			CocosDenshion::SimpleAudioEngine::getInstance()->
+				playEffect("soundeffect/button.wav");
 		this->removeChild(controlMenu);
 		CocosDenshion::SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
 		_eventDispatcher->dispatchCustomEvent(Message::game_resume, nullptr);
@@ -215,16 +219,16 @@ void UiLayer::showGameoverBox(EventCustom *event) {
 	n = LocalRecord::inst()->getHighestRecord(name);
 	auto highestLabel = LabelBMFont::create(std::to_string(n), "fonts/number_2.fnt");
 	highestLabel->setAnchorPoint(ccp(1.0, 0.5));
-	highestLabel->setPosition(designWidth * 8.7 / 11.29, designHeight * (1 - 10.62 / 18.81));
+	highestLabel->setPosition(designWidth * 8.7 / 11.29, designHeight * (1 - 16.08 / 18.81));
 	highestLabel->setScale(1.3f);
 	bg->addChild(highestLabel, 10);
 
-	auto pic = Sprite::create(name + "pic.png");
+	auto pic = Sprite::create(name + "/pic.png");
 	pic->setPosition(designWidth * 4.2 / 11.29, designHeight * (1 - 5.05 / 18.81));
 	pic->setRotation(-10);
 	bg->addChild(pic);
 
-	auto songname = Sprite::create(name + "name.png");
+	auto songname = Sprite::create(name + "/name.png");
 	songname->setAnchorPoint(ccp(0, 0.5f));
 	songname->setPosition(designWidth * 1.72 / 11.29, designHeight * (1 - 10.96 / 18.81));
 	bg->addChild(songname);
@@ -261,16 +265,18 @@ void UiLayer::showGameoverBox(EventCustom *event) {
 
 	this->addChild(bg, 1000);
 	button1->setCallback([this, bg, menu](Ref *){
-		CocosDenshion::SimpleAudioEngine::getInstance()->
-			playEffect("soundeffect/button.wav");
+		if (OptionsScene::ifSound)
+			CocosDenshion::SimpleAudioEngine::getInstance()->
+				playEffect("soundeffect/button.wav");
 		Director::getInstance()->popScene();
 	});
 
 	button2->setCallback([this, bg](Ref *){
 		this->removeChild(bg);
 		this->_eventDispatcher->dispatchCustomEvent(Message::game_restart, nullptr);
-		CocosDenshion::SimpleAudioEngine::getInstance()->
-			playEffect("soundeffect/button.wav");
+		if (OptionsScene::ifSound)
+			CocosDenshion::SimpleAudioEngine::getInstance()->
+				playEffect("soundeffect/button.wav");
 	});
 	return;
 }
