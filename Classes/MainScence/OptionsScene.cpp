@@ -9,28 +9,47 @@ bool OptionsScene::init() {
 	if (!Scene::init()) return false;
 
 	auto bg = Layer::create();
-	auto bgPic = Sprite::create("helpandoptionsscene/bg.jpg");
-	auto optionBox = Sprite::create("helpandoptionsscene/optionBox.png");
+	auto bgPic = Sprite::create("helpandoptionsscene/bg.png");
+	auto optionBox = Sprite::create("helpandoptionsscene/optionsbox.png");
 	auto home = MenuItemImage::create("buttons/button_home_n.png", "buttons/button_home_s.png", 
 		[this](Ref *){Director::getInstance()->popScene();});
 	auto menu1 = Menu::create(home, nullptr);
 
-	auto music = MenuItemImage::create("buttons/button_music_n.png", "buttons/button_music_n.png",
-		[this](Ref *){
+	auto *music = MenuItemImage::create("helpandoptionsscene/button_music_o.png", "helpandoptionsscene/button_music_o.png",
+		[this](Ref *ref){
+			auto item = static_cast<MenuItemImage *>(ref);
 			auto inst = CocosDenshion::SimpleAudioEngine::getInstance();
 			OptionsScene::ifMusic = !OptionsScene::ifMusic;
-			if (inst->isBackgroundMusicPlaying())
+			Rect rect(item->getNormalImage()->getBoundingBox());
+			if (inst->isBackgroundMusicPlaying()) {
 				inst->end();
-			else
+				item->setNormalSpriteFrame(SpriteFrame::create("helpandoptionsscene/button_music_c.png", rect));
+			}
+			else {
 				inst->playBackgroundMusic("soundeffect/bg.mp3", true);
+				item->setNormalSpriteFrame(SpriteFrame::create("helpandoptionsscene/button_music_o.png", rect));
+			}
 	});
-	auto sound = MenuItemImage::create("buttons/button_sound_n.png", "buttons/button_sound_n.png",
-		[this](Ref *){
+	auto sound = MenuItemImage::create("helpandoptionsscene/button_sound_o.png", "helpandoptionsscene/button_sound_o.png",
+		[this](Ref *ref){
+			auto item = static_cast<MenuItemImage *>(ref);
+			Rect rect(item->getNormalImage()->getBoundingBox());
 			OptionsScene::ifSound = !OptionsScene::ifSound;
+			if (OptionsScene::ifSound)
+				item->setNormalSpriteFrame(SpriteFrame::create("helpandoptionsscene/button_sound_o.png", rect));
+			else
+				item->setNormalSpriteFrame(SpriteFrame::create("helpandoptionsscene/button_sound_c.png", rect));
+
 	});
-	auto shack = MenuItemImage::create("buttons/button_shack_n.png", "buttons/button_shack_n.png",
-		[this](Ref *){
+	auto shack = MenuItemImage::create("helpandoptionsscene/button_shack_o.png", "helpandoptionsscene/button_shack_o.png",
+		[this](Ref *ref){
+			auto item = static_cast<MenuItemImage *>(ref);
+			Rect rect(item->getNormalImage()->getBoundingBox());
 			OptionsScene::ifShack = !OptionsScene::ifShack;
+			if (OptionsScene::ifShack)
+				item->setNormalSpriteFrame(SpriteFrame::create("helpandoptionsscene/button_shack_o.png", rect));
+			else
+				item->setNormalSpriteFrame(SpriteFrame::create("helpandoptionsscene/button_shack_c.png", rect));
 	});
 	auto menu2 = Menu::create(music, sound, shack, nullptr);
 
@@ -40,19 +59,25 @@ bool OptionsScene::init() {
 	bg->addChild(optionBox);
 	optionBox->addChild(menu2);
 
+	bgPic->setScale(designWidth/bgPic->getTextureRect().getMaxX());
+	bgPic->setPosition(designWidth/2, designHeight/2);
 	home->setAnchorPoint(Point(0, 1));
-	home->setPosition(50, 0);
+	home->setPosition(50, -50);
 	menu1->setAnchorPoint(Point(0, 1));
 	menu1->setPosition(0, designHeight);
 	
+	optionBox->setScale(designWidth/4*3/optionBox->getTextureRect().getMaxX());
 	optionBox->setAnchorPoint(Point(0.5, 0.5));
-	optionBox->setPosition(designWidth/2, designHeight/2);
+	optionBox->setPosition(designWidth/2, designHeight/2-50);
 	menu2->setAnchorPoint(Point(0.5, 0.5));
 	auto mid = Point(optionBox->getTextureRect().getMaxX()/2, optionBox->getTextureRect().getMaxY()/2);
 	menu2->setPosition(mid);
-	music->setPosition(0, 100);
+	music->setPosition(0, 300);
 	sound->setPosition(0, -50);
-	shack->setPosition(0, -200);
+	shack->setPosition(0, -400);
+	music->setScale(0.9);
+	sound->setScale(0.9);
+	shack->setScale(0.9);
 
 	return true;
 }
