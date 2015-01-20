@@ -6,13 +6,13 @@ bool HelpScene::init() {
 	if (!Scene::init()) return false;
 
 	auto bg = Layer::create();
-	auto bgPic = Sprite::create("helpandoptionsscene/bg.jpg");
+	auto bgPic = Sprite::create("helpandoptionsscene/bg.png");
 	auto home = MenuItemImage::create("buttons/button_home_n.png", "buttons/button_home_s.png", 
 		[this](Ref *){Director::getInstance()->popScene();});
 	auto menu = Menu::create(home, nullptr);
 
 	home->setAnchorPoint(Point(0, 1));
-	home->setPosition(50, 0);
+	home->setPosition(50, -50);
 	menu->setAnchorPoint(Point(0, 1));
 	menu->setPosition(0, designHeight);
 
@@ -20,13 +20,17 @@ bool HelpScene::init() {
 	bg->addChild(bgPic);
 	bg->addChild(menu);
 
-	for (int i = 0; i < 3; i++) {
+	bgPic->setScale(designWidth/bgPic->getTextureRect().getMaxX());
+	bgPic->setPosition(designWidth/2, designHeight/2);
+
+	for (int i = 0; i < 5; i++) {
 		std::string filename = "helpandoptionsscene/helpcard_" + std::to_string(i) + ".png";
 		auto helpCard = Sprite::create(filename);
 		cards.push_back(helpCard);
 		addChild(helpCard);
 		helpCard->setAnchorPoint(Point(0.5, 0.5));
-		auto x = helpCard->getTextureRect().getMaxX() + 50;
+		helpCard->setScale(designWidth/4*3/helpCard->getTextureRect().getMaxX());
+		auto x = helpCard->getTextureRect().getMaxX() * helpCard->getScale() + 50;
 		helpCard->setPosition(designWidth/2 + x * i, designHeight/2);
 	}
 
@@ -55,29 +59,28 @@ bool HelpScene::onTouchBegan(Touch *touch, Event *event) {
 
 void HelpScene::onTouchMoved(Touch *touch, Event *event) {
 	auto center = touch->getLocation();
-	for (auto card : cards) {
-		card->runAction(MoveBy::create(0, Point(center.x - start.x, 0)));
+	if (center.x - start.x != 0) {
+		for (auto card : cards)
+			card->runAction(MoveBy::create(0, Point(center.x - start.x, 0)));
+		direction = center.x - start.x;
+		start = center;
 	}
-	direction = center.x - start.x;
-	start = center;
 }
 
 void HelpScene::onTouchEnded(Touch *touch, Event *event) {
-	Sprite *midCard = nullptr;
+	int midCard = 0;
 	float min = designWidth;
 	float midX = (direction < 0) ? designWidth/3*2 : designWidth/3;
 
-	for (auto card : cards) {
-		auto dis = abs(card->getPosition().x - midX);
+	for (int i = 0; i < cards.size(); i++) {
+		auto dis = abs(cards[i]->getPosition().x - midX);
 		if (dis < min) {
-			midCard = card;
+			midCard = i;
 			min = dis;
 		}
 	}
-	if (!midCard)
-		midCard = cards[0];
 
-	for (auto card : cards) {
-		card->runAction(MoveBy::create(0.2, Point(designWidth/2 - midCard->getPosition().x, 0)));
-	}
+	auto x = cards[0]->getTextureRect().getMaxX() * cards[0]->getScale() + 50;
+	for (int i = 0; i < cards.size(); i++)
+		cards[i]->runAction(MoveTo::create(0.1, Point(designWidth/2 + x * (i - midCard), designHeight/2)));
 }
