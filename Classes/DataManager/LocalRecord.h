@@ -7,14 +7,13 @@
 
 class LocalRecord {
 private:
-	static LocalRecord* _inst;
-	LocalRecord() {
-		readFromFile();
-	}
 public:
+	static LocalRecord* _inst;
 	cocos2d::ValueMap data;
+
 	static LocalRecord* inst() {
 		if (!_inst) _inst = new LocalRecord();
+		_inst->readFromFile();
 		return _inst;
 	}
 

@@ -36,12 +36,12 @@ bool SongSelectionScene::init() {
 	menu->setPosition(ccp(0, 0));
 	bg->addChild(menu);
 
-	auto title = Sprite::create();
-	title->setSpriteFrame("xuanzeyinyue.png");
-	title->setAnchorPoint(Point(0, 1));
-	title->setScale(0.7f);
-	title->setPosition(30, designHeight-50);
-	bg->addChild(title, 2);
+//	auto title = Sprite::create();
+//	title->setSpriteFrame("xuanzeyinyue.png");
+//	title->setAnchorPoint(Point(0, 1));
+//	title->setScale(0.7f);
+//	title->setPosition(30, designHeight-50);
+//	bg->addChild(title, 2);
 
 	for (int i = 0; i < 5; i++) {
 		stars[i] = Sprite::create("songselectscence/star_1.png");
@@ -50,11 +50,13 @@ bool SongSelectionScene::init() {
 		bg->addChild(stars[i]);
 	}
 	//just for test;
-	for (int i = 1; i <= 6; i++) {
+	for (int i = 1; i <= 3; i++) {
 		std::string musicname = "songs/song" + std::to_string(i);
 		songs.push_back(musicname);
-		difficult.push_back((i % 3 + 2));
 	}
+	difficult.push_back(3);
+	difficult.push_back(1);
+	difficult.push_back(4);
 
  //添加列表
 	float w = 98;
@@ -200,7 +202,7 @@ TableViewCell* SongSelectionScene::tableCellAtIndex(TableView *table, ssize_t id
 }
 
 ssize_t SongSelectionScene::numberOfCellsInTableView(TableView *table) {
-	return 6;
+	return songs.size();
 }
 
 void SongSelectionScene::tableCellHighlight(TableView *table, TableViewCell *cell) {

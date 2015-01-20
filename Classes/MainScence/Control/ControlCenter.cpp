@@ -388,11 +388,6 @@ void ControlCenter::roleMove() {
         		DataVo::inst()->actionCount = 25;
         	}
 			lastInput = "";
-//			else { //若左边无栏杆，则转化为跳跃操作
-//				roleStatus = RoleStatus::Action_JUMP;
-//				DataVo::inst()->actionCount = 35;
-//			}
-//        	lastInput = "";
         }
 		else if (lastInput == Message::input_slide_up_right) {
 			bool upR = false;

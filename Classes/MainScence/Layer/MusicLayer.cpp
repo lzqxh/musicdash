@@ -27,7 +27,7 @@ bool MusicLayer::init() {
 
 	int numbers = 150;
 	float d = 1.0105349152832204381907932438556f;
-	float x = 0.258, y = 1064.0/1111, tolx = 0, toly = 1064.0/1111;
+	float x = 0.258, y = 1, tolx = 0, toly = 1;
 	for (int i = 0; i < numbers; i++) {
 		tolx += x;
 		x = x * d;
@@ -37,7 +37,7 @@ bool MusicLayer::init() {
 	for (int i = 0; i < numbers + 30; i++) {
 		Node* node = Node::create();
 		node->setContentSize(Size(1.28f * roadbg->getContentSize().width, 1));
-		node->setNormalizedPosition(Vec2(0.5, y));
+		node->setPosition(ccp(_center.x, y * 1050));
 		node->setScale(x);
 		addChild(node, 2);
 		objects.push_back(node);

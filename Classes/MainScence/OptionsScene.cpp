@@ -30,6 +30,11 @@ bool OptionsScene::init() {
 				item->setNormalSpriteFrame(SpriteFrame::create("helpandoptionsscene/button_music_o.png", rect));
 			}
 	});
+	if (!OptionsScene::ifMusic) {
+		Rect rect(music->getNormalImage()->getBoundingBox());
+		music->setNormalSpriteFrame(SpriteFrame::create("helpandoptionsscene/button_music_c.png", rect));
+	}
+
 	auto sound = MenuItemImage::create("helpandoptionsscene/button_sound_o.png", "helpandoptionsscene/button_sound_o.png",
 		[this](Ref *ref){
 			auto item = static_cast<MenuItemImage *>(ref);
@@ -41,6 +46,11 @@ bool OptionsScene::init() {
 				item->setNormalSpriteFrame(SpriteFrame::create("helpandoptionsscene/button_sound_c.png", rect));
 
 	});
+	if (!OptionsScene::ifSound) {
+		Rect rect(sound->getNormalImage()->getBoundingBox());
+		sound->setNormalSpriteFrame(SpriteFrame::create("helpandoptionsscene/button_sound_c.png", rect));
+	}
+
 	auto shack = MenuItemImage::create("helpandoptionsscene/button_shack_o.png", "helpandoptionsscene/button_shack_o.png",
 		[this](Ref *ref){
 			auto item = static_cast<MenuItemImage *>(ref);
@@ -51,6 +61,10 @@ bool OptionsScene::init() {
 			else
 				item->setNormalSpriteFrame(SpriteFrame::create("helpandoptionsscene/button_shack_c.png", rect));
 	});
+	if (!OptionsScene::ifShack) {
+		Rect rect(shack->getNormalImage()->getBoundingBox());
+		shack->setNormalSpriteFrame(SpriteFrame::create("helpandoptionsscene/button_shack_c.png", rect));
+	}
 	auto menu2 = Menu::create(music, sound, shack, nullptr);
 
 	addChild(bg);

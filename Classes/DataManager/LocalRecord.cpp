@@ -30,3 +30,4 @@ void LocalRecord::setHighestRecord(std::string name, int val) {
 int LocalRecord::getHighestRecord(std::string name) {
 	return data["highest_record"].asValueMap()[name].asInt();
 }
+
