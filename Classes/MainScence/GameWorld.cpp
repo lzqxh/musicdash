@@ -1,4 +1,5 @@
 #include "GameWorld.h"
+#include "DataManager\DataVo.h"
 #include "Control\ControlCenter.h"
 
 using namespace cocos2d;
@@ -7,7 +8,7 @@ bool GameWorld::init() {
 	if ( !Scene::init()) return false;
 
 
-	musicLayer = MusicLayer::create();
+	musicLayer = MusicLayer::create(DataVo::inst()->skinPath);
 	this->addChild(musicLayer);
 
 	roleLayer = RoleLayer::create();
@@ -15,7 +16,6 @@ bool GameWorld::init() {
 
 	scoreLayer = ScoreLayer::create();
 	this->addChild(scoreLayer);
-
 
 	uiLayer = UiLayer::create();
 	this->addChild(uiLayer);

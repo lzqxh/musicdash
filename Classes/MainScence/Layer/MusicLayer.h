@@ -10,13 +10,16 @@ USING_NS_CC;
 class MusicLayer : public Layer {
 private:
 	std::vector<Node*> objects;
-	Texture2D* _explosionTexture;
+	std::vector<Node*> roads;
+
+	Texture2D* roadTexture;
 	void run(EventCustom*);
 	void addNote(EventCustom*);
-	void dispEffect(EventCustom*);
+//	void dispEffect(EventCustom*);
 	void explode(EventCustom*);
 	void explodeAll(EventCustom*);
 
+	void roadMove();
 	void addTrafficCone(int index);
 	void addBeer(int index);
 	void addBarrier(int index);
@@ -25,8 +28,10 @@ private:
 	void addBuilding();
 
 public:
+	std::string skinPath;
 	virtual bool init();
-	CREATE_FUNC(MusicLayer);
+	static MusicLayer* create(std::string);
+//	CREATE_FUNC(MusicLayer);
 
 	virtual void onEnter();
 	virtual void onExit();

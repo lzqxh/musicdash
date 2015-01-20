@@ -44,6 +44,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
 //    auto scene = GameWorld::create();
     auto scene = LoginScene::create();
 //    auto scene = SongSelectionScene::create();
+//	DataVo::inst()->load("songs/song4");
+//	DataVo::inst()->setMode(1);
+//	auto scene = GameWorld::create();
 
     // run
     director->runWithScene(scene);

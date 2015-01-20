@@ -98,7 +98,7 @@ void DataVo::load(std::string name) {
 
 void DataVo::setMode(int _mode) {
 	mode = _mode;
-	skinPath = "mainscence/skins/+" + std::to_string(mode) + "/";
+	skinPath = "mainscence/skins/" + std::to_string(mode) + "/";
 }
 
 void DataVo::updateRecord() {

@@ -61,7 +61,7 @@ bool LoginScene::init() {
 	title2->setPosition(ccp(0, -400));
 	title2->setOpacity(0);
 	auto title2Action = Sequence::create(
-		DelayTime::create(delayTime + 0.4),
+		DelayTime::create(delayTime + 0.2),
 		FadeIn::create(0.2f),
 		ScaleTo::create(0.3f, 2.0),
 		Spawn::create(
@@ -76,7 +76,7 @@ bool LoginScene::init() {
 	auto title3 = Sprite::create("loginscence/title3.png");
 	title3->setPosition(ccp(-350, 400));
 	auto title3Action = Sequence::create(
-		DelayTime::create(delayTime + 1.6),
+		DelayTime::create(delayTime + 1.0),
 		MoveTo::create(0.2f, ccp(-350, 15)),
 		JumpTo::create(1.2f, ccp(0, 0), 40, 3),
 		nullptr);
