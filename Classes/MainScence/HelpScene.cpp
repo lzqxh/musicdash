@@ -7,7 +7,7 @@ bool HelpScene::init() {
 
 	auto bg = Layer::create();
 	auto bgPic = Sprite::create("helpandoptionsscene/bg.png");
-	auto home = MenuItemImage::create("buttons/button_home_n.png", "buttons/button_home_s.png", 
+	auto home = MenuItemImage::create("buttons/button_exit_n.png", "buttons/button_exit_n.png", 
 		[this](Ref *){Director::getInstance()->popScene();});
 	auto menu = Menu::create(home, nullptr);
 
@@ -23,7 +23,7 @@ bool HelpScene::init() {
 	bgPic->setScale(designWidth/bgPic->getTextureRect().getMaxX());
 	bgPic->setPosition(designWidth/2, designHeight/2);
 
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 6; i++) {
 		std::string filename = "helpandoptionsscene/helpcard_" + std::to_string(i) + ".png";
 		auto helpCard = Sprite::create(filename);
 		cards.push_back(helpCard);

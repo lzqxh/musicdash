@@ -83,7 +83,7 @@ void ControlCenter::staticScore(int score) {
 		else {
 			DataVo::inst()->combos++;
 			DataVo::inst()->speedX = 10;
-			DataVo::inst()->coins += 1;
+//			DataVo::inst()->coins += 1;
 		}
 		_eventDispatcher->dispatchCustomEvent(Message::score, &score);
 		_eventDispatcher->dispatchCustomEvent(Message::disp_score, nullptr);
@@ -215,7 +215,7 @@ void ControlCenter::gameStart(EventCustom* e = nullptr) {
 	roleStatus = Sliding_M;
 	DataVo::inst()->combos = 0;
 	DataVo::inst()->distance = 0;
-	DataVo::inst()->energyValue = 9;
+	DataVo::inst()->energyValue = 0;
 	DataVo::inst()->speed = 50;
 	DataVo::inst()->speedX = 0;
 	DataVo::inst()->isBeerEffectStart = false;

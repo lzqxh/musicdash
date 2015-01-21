@@ -11,7 +11,7 @@ bool OptionsScene::init() {
 	auto bg = Layer::create();
 	auto bgPic = Sprite::create("helpandoptionsscene/bg.png");
 	auto optionBox = Sprite::create("helpandoptionsscene/optionsbox.png");
-	auto home = MenuItemImage::create("buttons/button_home_n.png", "buttons/button_home_s.png", 
+	auto home = MenuItemImage::create("buttons/button_exit_n.png", "buttons/button_exit_s.png", 
 		[this](Ref *){Director::getInstance()->popScene();});
 	auto menu1 = Menu::create(home, nullptr);
 

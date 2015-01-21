@@ -6,6 +6,7 @@
 #include "DataManager/DataVo.h"
 #include "DataManager/LocalRecord.h"
 #include "../OptionsScene.h"
+#include "ScoreLayer.h"
 
 bool UiLayer::init() {
 	if (!Layer::init()) return false;
@@ -104,7 +105,7 @@ void UiLayer::showControlMenu(Ref *pSender) {
 		this->removeChild(controlMenu);
 		Director::getInstance()->popScene();
 	});
-	auto cancel = MenuItemImage::create("buttons/button_play_n.png", "buttons/button_play_s.png", [this](Ref *) {
+	auto cancel = MenuItemImage::create("buttons/button_continue_n.png", "buttons/button_continue_s.png", [this](Ref *) {
 		if (OptionsScene::ifSound)
 			CocosDenshion::SimpleAudioEngine::getInstance()->
 				playEffect("soundeffect/button.wav");
@@ -173,14 +174,14 @@ void UiLayer::energyExp(EventCustom *event) {
 }
 
 void UiLayer::displayScore(EventCustom *event) {
-	if (score) scoreBox->removeChild(score, true);
-
-	score = LabelBMFont::create(std::to_string(DataVo::inst()->coins),
+	if (score)
+		scoreBox->removeChild(score, true);
+	score = LabelBMFont::create(std::to_string(ScoreLayer::score),
 		"fonts/number_2.fnt");
 	scoreBox->addChild(score);
 	score->setAnchorPoint(Point(1, 0.5f));
-	float x = scoreBox->getTextureRect().getMaxX() * scoreBox->getScale() - 45;
-	float y = scoreBox->getTextureRect().getMaxY() * scoreBox->getScale() / 4  - 2;
+	float x = scoreBox->getTextureRect().getMaxX() * scoreBox->getScale() - 50;
+	float y = scoreBox->getTextureRect().getMaxY() * scoreBox->getScale() / 4  + 3;
 	score->setPosition(x, y);
 
 	if (distance) scoreBox->removeChild(distance, true);
@@ -189,7 +190,7 @@ void UiLayer::displayScore(EventCustom *event) {
 		"fonts/number_2.fnt");
 	scoreBox->addChild(distance);
 	distance->setAnchorPoint(Point(1, 0.5f));
-	x = scoreBox->getTextureRect().getMaxX() * scoreBox->getScale() - 45;
+	x = scoreBox->getTextureRect().getMaxX() * scoreBox->getScale() - 50;
 	y = scoreBox->getTextureRect().getMaxY() * scoreBox->getScale() * 3 / 4 - 3;
 	distance->setPosition(x, y);
 }
@@ -203,7 +204,7 @@ void UiLayer::showGameoverBox(EventCustom *event) {
 	bg->setAnchorPoint(ccp(0.5, 0.5));
 
 	int n = DataVo::inst()->coins;
-	auto scoreLabel = LabelBMFont::create(std::to_string(n), "fonts/number_2.fnt");
+	auto scoreLabel = LabelBMFont::create(std::to_string(ScoreLayer::score), "fonts/number_2.fnt");
 	scoreLabel->setAnchorPoint(ccp(1.0, 0.5));
 	scoreLabel->setPosition(designWidth * 8.7 / 11.29, designHeight * (1 - 14.26 / 18.81));
 	scoreLabel->setScale(1.3f);

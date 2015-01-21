@@ -19,5 +19,6 @@ public:
 	virtual void onEnter();
 	virtual void onExit();
 	void displayCombos(EventCustom*);
+	static int score;
 };
 #endif //__SCORE_LAYER_H__

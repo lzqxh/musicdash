@@ -3,9 +3,11 @@
 #include "consts/ResolutionConst.h"
 #include "DataManager/DataVo.h"
 
+int ScoreLayer::score = 0;
 
 bool ScoreLayer::init() {
 	if (!Layer::init()) return false;
+	score = 0;
 	return true;
 }
 
@@ -14,13 +16,10 @@ void ScoreLayer::onEnter() {
 	auto l1 = EventListenerCustom::create(Message::score,
 		[this](EventCustom *event){
 			int ds = *static_cast<int *>(event->getUserData());
-			float c;
-			if (ds == 1)
-				c = 0.9;
-			else if (ds == 2)
-				c = 1;
-			else 
-				c = 0;
+			if (ds == 1 || ds == 2) {
+				score += ds;
+				DataVo::inst()->coins += ds;
+			}
 	});
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(l1, this);
 	auto l2 = EventListenerCustom::create(Message::score,
