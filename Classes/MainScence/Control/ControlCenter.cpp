@@ -5,11 +5,13 @@
 #include "InputCenter.h"
 #include "MainScence\SongSelectionScene.h"
 #include "DataManager\DataVo.h"
+#include "MainScence\GameWorld.h"
 
 #include "consts\ResolutionConst.h"
 #include "consts\MyConsts.h"
 #include "consts\Message.h"
 #include "..\OptionsScene.h"
+#include "..\Layer\ScoreLayer.h"
 
 bool ControlCenter::init() {
 	if (!CCNode::init()) return false;
@@ -42,7 +44,7 @@ void ControlCenter::onEnter() {
 	_eventDispatcher->addCustomEventListener(Message::game_resume,
 											 CC_CALLBACK_1(ControlCenter::gameResume, this));
 	_eventDispatcher->addCustomEventListener(Message::game_restart,
-											 CC_CALLBACK_1(ControlCenter::gameStart, this));
+											 CC_CALLBACK_1(ControlCenter::gameRestart, this));
 	_eventDispatcher->addCustomEventListener(Message::game_stop,
 											 CC_CALLBACK_1(ControlCenter::gameOver, this));
 
@@ -50,7 +52,8 @@ void ControlCenter::onEnter() {
 											 CC_CALLBACK_1(ControlCenter::clickBeer, this));
 	CCLog("on Enter\n");
 	//直接开始～
-	this->_eventDispatcher->dispatchCustomEvent(Message::game_restart, nullptr);
+//	this->_eventDispatcher->dispatchCustomEvent(Message::game_restart, nullptr);
+	gameStart(nullptr);
 }
 
 void ControlCenter::onExit() {
@@ -219,6 +222,7 @@ void ControlCenter::gameStart(EventCustom* e = nullptr) {
 	DataVo::inst()->speed = 50;
 	DataVo::inst()->speedX = 0;
 	DataVo::inst()->isBeerEffectStart = false;
+	ScoreLayer::score = 0;
 	for (curTime = -138; curTime < 0; curTime++) {
 		_eventDispatcher->dispatchCustomEvent(Message::next_timeslice, nullptr);
 		int index = curTime + 138;
@@ -266,6 +270,11 @@ void ControlCenter::gameStart(EventCustom* e = nullptr) {
 void ControlCenter::gameOver(EventCustom* event = nullptr) {
 	gameStatus = gs_over;
 	DataVo::inst()->updateRecord();
+}
+
+void ControlCenter::gameRestart(EventCustom* event = nullptr) {
+	auto scene = GameWorld::create();
+	Director::getInstance()->replaceScene(scene);
 }
 
 void ControlCenter::gamePause(EventCustom* event = nullptr) {

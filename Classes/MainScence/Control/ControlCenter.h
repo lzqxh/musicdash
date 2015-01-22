@@ -60,6 +60,7 @@ public:
 	void gameOver(EventCustom*);
 	void gamePause(EventCustom*);
 	void gameResume(EventCustom*);
+	void gameRestart(EventCustom*);
 
 
 	//input from uiLayer

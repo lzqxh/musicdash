@@ -78,6 +78,7 @@ void UiLayer::onEnter() {
 void UiLayer::onExit() {
 	_eventDispatcher->removeEventListenersForTarget(this, true);
 	_eventDispatcher->removeCustomEventListeners(Message::beer_get);
+	_eventDispatcher->removeCustomEventListeners(Message::beer_clear);
 	_eventDispatcher->removeCustomEventListeners(Message::beer_effect_start);
 	_eventDispatcher->removeCustomEventListeners(Message::disp_score);
 	_eventDispatcher->removeCustomEventListeners(Message::game_stop);
@@ -227,7 +228,7 @@ void UiLayer::showGameoverBox(EventCustom *event) {
 	distanceLabel->setScale(1.3f);
 	bg->addChild(distanceLabel, 10);
 
-	n = LocalRecord::inst()->getHighestRecord(name);
+	n = std::max(LocalRecord::inst()->getHighestRecord(name), DataVo::inst()->distance);
 	auto highestLabel = LabelBMFont::create(std::to_string(n), "fonts/number_2.fnt");
 	highestLabel->setAnchorPoint(ccp(1.0, 0.5));
 	highestLabel->setPosition(designWidth * 8.7 / 11.29, designHeight * (1 - 16.08 / 18.81));

@@ -214,6 +214,8 @@ void MusicLayer::addBeer(int index) {
 
 void MusicLayer::addBarrier(int index) {
 	int interval = 10;
+	if (DataVo::inst()->isBeerEffectStart)
+		interval = interval / 3 * 2;
 	if (DataVo::inst()->data[index][4] % interval == 1) {
       	Sprite* sprite = Sprite::create(skinPath + "barrier.png");
 		sprite->setScale(1.5f);
@@ -233,6 +235,8 @@ void MusicLayer::addBarrier(int index) {
 
 void MusicLayer::addRailing(int index) {
 	int interval = 19;
+	if (DataVo::inst()->isBeerEffectStart)
+		interval = interval / 3 * 2;
 	if (DataVo::inst()->data[index][6] % interval == 1) {
       	Sprite* sprite = Sprite::create(skinPath + "railing.png");
       	sprite->setNormalizedPosition(Vec2(-0.14, 0));

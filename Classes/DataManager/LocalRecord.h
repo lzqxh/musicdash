@@ -12,8 +12,10 @@ public:
 	cocos2d::ValueMap data;
 
 	static LocalRecord* inst() {
-		if (!_inst) _inst = new LocalRecord();
-		_inst->readFromFile();
+		if (!_inst) {
+			_inst = new LocalRecord();
+			_inst->readFromFile();
+		}
 		return _inst;
 	}
 

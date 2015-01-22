@@ -7,16 +7,16 @@
         <dict>
             <key>songs/song1</key>
             <integer>6114</integer>
-            <key>songs/song2/</key>
-            <integer>6240</integer>
             <key>songs/song3</key>
-            <integer>0</integer>
+            <integer>4744</integer>
             <key>songs/song4</key>
             <integer>0</integer>
             <key>songs/song5</key>
             <integer>5913</integer>
+            <key>songs/song2</key>
+            <integer>4303</integer>
         </dict>
         <key>coins</key>
-        <integer>1268</integer>
+        <integer>3084</integer>
     </dict>
 </plist>
