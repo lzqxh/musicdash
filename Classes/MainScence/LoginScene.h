@@ -14,6 +14,7 @@ public:
 	void onStartButtonClicked(Ref *);
 	void onOptionsButtonClicked(Ref *);
 	void onHelpButtonClicked(Ref *);
+	void onRecordButtonClicked(Ref *);
 
 private:
 	Layer *layer;

@@ -31,6 +31,7 @@ namespace Message {
 	const std::string beer_effect_start = "beer_effect_start";
 	const std::string beer_effect_stop = "beer_effect_stop";
 	const std::string beer_click = "beer_click";
+	const std::string beer_clear= "beer_clear";
 };
 
 

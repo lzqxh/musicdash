@@ -53,6 +53,7 @@ void UiLayer::onEnter() {
 	Layer::onEnter();
 	score = distance = nullptr;
 	_eventDispatcher->addCustomEventListener(Message::beer_get, CC_CALLBACK_1(UiLayer::energyUp, this));
+	_eventDispatcher->addCustomEventListener(Message::beer_clear, CC_CALLBACK_1(UiLayer::energyClear, this));
 	_eventDispatcher->addCustomEventListener(Message::beer_effect_start, CC_CALLBACK_1(UiLayer::energyExp, this));
 	_eventDispatcher->addCustomEventListener(Message::disp_score, CC_CALLBACK_1(UiLayer::displayScore, this));
 	_eventDispatcher->addCustomEventListener(Message::game_stop, CC_CALLBACK_1(UiLayer::showGameoverBox, this));
@@ -159,6 +160,15 @@ void UiLayer::energyUp(EventCustom *event) {
 	auto cache = SpriteFrameCache::getInstance();
 	int &energyValue = DataVo::inst()->energyValue;
 	energyValue = energyValue >= 10 ? 10 : energyValue + 1;
+	char name[20];
+	sprintf(name, "energy_%d.png", energyValue);
+	energy->setDisplayFrame(cache->getSpriteFrameByName(name));
+}
+
+void UiLayer::energyClear(EventCustom *event) {
+	auto cache = SpriteFrameCache::getInstance();
+	int &energyValue = DataVo::inst()->energyValue;
+	energyValue = 0;
 	char name[20];
 	sprintf(name, "energy_%d.png", energyValue);
 	energy->setDisplayFrame(cache->getSpriteFrameByName(name));

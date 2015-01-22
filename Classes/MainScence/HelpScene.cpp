@@ -7,7 +7,7 @@ bool HelpScene::init() {
 
 	auto bg = Layer::create();
 	auto bgPic = Sprite::create("helpandoptionsscene/bg.png");
-	auto home = MenuItemImage::create("buttons/button_exit_n.png", "buttons/button_exit_n.png", 
+	auto home = MenuItemImage::create("buttons/button_back_n.png", "buttons/button_back_n.png", 
 		[this](Ref *){Director::getInstance()->popScene();});
 	auto menu = Menu::create(home, nullptr);
 

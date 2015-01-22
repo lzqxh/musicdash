@@ -224,7 +224,7 @@ void ControlCenter::gameStart(EventCustom* e = nullptr) {
 		int index = curTime + 138;
 		if (index >= 0) _eventDispatcher->dispatchCustomEvent(Message::next_note, &index);
 	}
-	_eventDispatcher->dispatchCustomEvent(Message::beer_get, nullptr);
+	_eventDispatcher->dispatchCustomEvent(Message::beer_clear, nullptr);
 	_eventDispatcher->dispatchCustomEvent(Message::disp_score, nullptr);
 	auto cache = SpriteFrameCache::getInstance();
 	_countSprite = Sprite::create();
@@ -232,6 +232,8 @@ void ControlCenter::gameStart(EventCustom* e = nullptr) {
 	this->addChild(_countSprite);
 
 	_countSprite->setDisplayFrame(cache->getSpriteFrameByName("count_3.png"));
+	CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("soundeffect/321.mp3");
+
 	gameStatus = gs_counting;
 	auto action = CCSequence::create(
 		DelayTime::create(1.0f),

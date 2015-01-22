@@ -3,6 +3,7 @@
 #include "SongSelectionScene.h"
 #include "HelpScene.h"
 #include "OptionsScene.h"
+#include "RecordScene.h"
 using namespace cocos2d;
 using namespace ui;
 
@@ -95,7 +96,7 @@ bool LoginScene::init() {
 		CC_CALLBACK_1(LoginScene::onHelpButtonClicked, this));
 	btnHelp->setPosition(170, -390);
 	auto btnAchieve = MenuItemImage::create("buttons/button_achievement_n.png", 
-		"buttons/button_achievement_s.png");
+		"buttons/button_achievement_s.png", CC_CALLBACK_1(LoginScene::onRecordButtonClicked, this));
 	btnAchieve->setPosition(-150, -440);
 	auto btnOptions = MenuItemImage::create("buttons/button_options_n.png", 
 		"buttons/button_options_s.png", CC_CALLBACK_1(LoginScene::onOptionsButtonClicked, this));
@@ -152,4 +153,9 @@ void LoginScene::onHelpButtonClicked(Ref *pSender) {
 void LoginScene::onOptionsButtonClicked(Ref *pSender) {
 	auto options = OptionsScene::create();
 	Director::getInstance()->pushScene(TransitionFade::create(0.5, options));
+}
+
+void LoginScene::onRecordButtonClicked(Ref *pSender) {
+	auto record = RecordScene::create();
+	Director::getInstance()->pushScene(TransitionFade::create(0.5, record));
 }
