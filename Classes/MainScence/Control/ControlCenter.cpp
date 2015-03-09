@@ -81,11 +81,11 @@ void ControlCenter::staticScore(int score) {
 	if (score != 0) {
 		if (score == -1) {
 			DataVo::inst()->combos = 0;
-			DataVo::inst()->speedX = 0;
+			DataVo::inst()->speedX = -10;
 		}
 		else {
 			DataVo::inst()->combos++;
-			DataVo::inst()->speedX = 10;
+			DataVo::inst()->speedX = DataVo::inst()->combos * (score == 1 ? 1 : 1.2);
 //			DataVo::inst()->coins += 1;
 		}
 		_eventDispatcher->dispatchCustomEvent(Message::score, &score);

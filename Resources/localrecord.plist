@@ -6,17 +6,17 @@
         <key>highest_record</key>
         <dict>
             <key>songs/song1</key>
-            <integer>6114</integer>
+            <integer>0</integer>
             <key>songs/song3</key>
-            <integer>4744</integer>
+            <integer>0</integer>
             <key>songs/song4</key>
             <integer>0</integer>
             <key>songs/song5</key>
-            <integer>5913</integer>
+            <integer>0</integer>
             <key>songs/song2</key>
-            <integer>4303</integer>
+            <integer>0</integer>
         </dict>
         <key>coins</key>
-        <integer>3084</integer>
+        <integer>0</integer>
     </dict>
 </plist>

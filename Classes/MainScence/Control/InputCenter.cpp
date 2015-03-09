@@ -38,12 +38,17 @@ bool InputCenter::onTouchBegan(Touch *touch, Event *event) {
 	addChild(ms);
 	ms->setPosition(center);
 	this->ms = ms;
+	lastInput = "";
 
 	return true;
 }
 void InputCenter::onTouchMoved(Touch *touch, Event *event) {
 	auto center = touch->getLocation();
 	ms->setPosition(center);
+
+	if (lastInput == Message::input_slide_up_left ||
+		lastInput == Message::input_slide_up_right)
+		return;
 
 	auto x = center.x - start.x;
 	auto y = center.y - start.y;

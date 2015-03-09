@@ -26,6 +26,7 @@ LOCAL_SRC_FILES := hellocpp/main.cpp \
                    ../../Classes/MainScence/SongSelectionScene.cpp \
                    ../../Classes/MainScence/OptionsScene.cpp \
                    ../../Classes/MainScence/HelpScene.cpp \
+                   ../../Classes/MainScence/RecordScene.cpp \
                    ../../Classes/tool/MyGeometry.cpp 
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes
